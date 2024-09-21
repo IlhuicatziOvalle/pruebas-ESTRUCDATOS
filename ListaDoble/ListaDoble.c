@@ -190,13 +190,17 @@ void* Peek(Pilas *pila) {
 }
 
 
-// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios
-int** crearSubmatriz(int dim) {
+// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios o específicos
+int** crearSubmatriz(int dim, int valoresAleatorios) {
     int** matriz = (int**)malloc(dim * sizeof(int*));
     for (int i = 0; i < dim; i++) {
         matriz[i] = (int*)malloc(dim * sizeof(int));
         for (int j = 0; j < dim; j++) {
-            matriz[i][j] = rand() % 10;  // Inicializa con valores aleatorios entre 0 y 9
+            if (valoresAleatorios) {
+                matriz[i][j] = rand() % 10;  // Inicializa con valores aleatorios entre 0 y 9
+            } else {
+                matriz[i][j] = 0;  // Inicializa con ceros
+            }
         }
     }
     return matriz;
@@ -208,16 +212,6 @@ void liberarMatriz(int** matriz, int dim) {
         free(matriz[i]);
     }
     free(matriz);
-}
-
-// Función para imprimir una matriz
-void imprimirMatriz(int** matriz, int dim) {
-    for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-            printf("%d ", matriz[i][j]);
-        }
-        printf("\n");
-    }
 }
 
 // Producto suma de dos matrices de tamaño dim x dim
@@ -235,6 +229,19 @@ int** productoSuma(int dim, int** A, int** B) {
     return C;
 }
 
+// Función para imprimir una matriz en el formato solicitado
+void imprimirMatriz(int** matriz, int dim) {
+    for (int i = 0; i < dim; i++) {
+        printf("[ ");
+        for (int j = 0; j < dim; j++) {
+            printf("%d", matriz[i][j]);
+            if (j < dim - 1) {
+                printf(", ");
+            }
+        }
+        printf(" ]\n");
+    }
+}
 
 
 /*MATRIZ 4x4

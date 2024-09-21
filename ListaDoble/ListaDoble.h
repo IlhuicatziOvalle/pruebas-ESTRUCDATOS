@@ -37,15 +37,16 @@ void* Peek(Pilas *pila);
 
 
 
-// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios
-int** crearSubmatriz(int dim);
+// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios o específicos
+int** crearSubmatriz(int dim, int valoresAleatorios);
 // Función para liberar la memoria de una matriz
 void liberarMatriz(int** matriz, int dim);
-// Función para imprimir una matriz
-void imprimirMatriz(int** matriz, int dim);
+
 // Producto suma de dos matrices de tamaño dim x dim
 int** productoSuma(int dim, int** A, int** B);
 
+// Función para imprimir una matriz en el formato solicitado
+void imprimirMatriz(int** matriz, int dim);
 /*MATRICES 4x4
 // Función para imprimir una matriz de tamaño fijo 4x4
 void imprimirMatriz(int matriz[4][4], int tamano);

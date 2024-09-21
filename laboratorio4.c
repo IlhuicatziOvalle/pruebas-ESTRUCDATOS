@@ -5,41 +5,54 @@
 #include "ListaDoble/ListaDoble.h"  // Asegúrate de que este archivo incluya las declaraciones necesarias
 
 int main() {
-    int subDim = 4;  // Dimensión de las submatrices
+    int subDim = 4;  // Puedes ajustar esto a 1000 para el tamaño máximo
 
-    // Inicialización de las submatrices con valores aleatorios
-    int** A_sub1 = crearSubmatriz(subDim);
-    int** B_sub1 = crearSubmatriz(subDim);
+    // Inicialización de las matrices con valores específicos
+    int** A = (int**)malloc(subDim * sizeof(int*));
+    int** B = (int**)malloc(subDim * sizeof(int*));
 
-    int** A_sub2 = crearSubmatriz(subDim);
-    int** B_sub2 = crearSubmatriz(subDim);
+    // Ejemplo para el caso dado:
+    int A_valores[4][4] = {
+        {1,  2,  3,  4},
+        {5,  6,  7,  8},
+        {9, 10, 11, 12},
+        {13,14, 15, 16}
+    };
 
-    // Realiza el producto-suma para las submatrices
-    int** C_sub1 = productoSuma(subDim, A_sub1, B_sub1);
-    int** C_sub2 = productoSuma(subDim, A_sub2, B_sub2);
+    int B_valores[4][4] = {
+        {1,  2,  1,  2},
+        {0,  0,  0,  0},
+        {-1,-2, -1, -2},
+        {2,  1,  2,  1}
+    };
 
-    // Imprime las submatrices y los resultados
-    printf("Submatriz A_sub1:\n");
-    imprimirMatriz(A_sub1, subDim);
-    printf("\nSubmatriz B_sub1:\n");
-    imprimirMatriz(B_sub1, subDim);
-    printf("\nProducto-suma C_sub1:\n");
-    imprimirMatriz(C_sub1, subDim);
+    // Copia los valores en las matrices A y B
+    for (int i = 0; i < subDim; i++) {
+        A[i] = (int*)malloc(subDim * sizeof(int));
+        B[i] = (int*)malloc(subDim * sizeof(int));
+        for (int j = 0; j < subDim; j++) {
+            A[i][j] = A_valores[i][j];
+            B[i][j] = B_valores[i][j];
+        }
+    }
 
-    printf("\nSubmatriz A_sub2:\n");
-    imprimirMatriz(A_sub2, subDim);
-    printf("\nSubmatriz B_sub2:\n");
-    imprimirMatriz(B_sub2, subDim);
-    printf("\nProducto-suma C_sub2:\n");
-    imprimirMatriz(C_sub2, subDim);
+    // Realiza el producto-suma para las matrices
+    int** C = productoSuma(subDim, A, B);
+
+    // Imprime las matrices y los resultados
+    printf("Matriz A:\n");
+    imprimirMatriz(A, subDim);
+
+    printf("\nMatriz B:\n");
+    imprimirMatriz(B, subDim);
+
+    printf("\nProducto-suma C:\n");
+    imprimirMatriz(C, subDim);
 
     // Libera la memoria de las matrices
-    liberarMatriz(A_sub1, subDim);
-    liberarMatriz(B_sub1, subDim);
-    liberarMatriz(C_sub1, subDim);
-    liberarMatriz(A_sub2, subDim);
-    liberarMatriz(B_sub2, subDim);
-    liberarMatriz(C_sub2, subDim);
+    liberarMatriz(A, subDim);
+    liberarMatriz(B, subDim);
+    liberarMatriz(C, subDim);
 
     return 0;
 }
