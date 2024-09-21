@@ -27,12 +27,24 @@ void ImprimirLista(const ListaDoble *const, void (*func)(void *));
 void LiberarLista(ListaDoble *lista);
 
 typedef ListaDoble Pilas;
+
 void push(Pilas *pila, void *dato);
 void* pop(Pilas *pila);
 int estaVacia(Pilas *pila);
-void imprimirPila(Pilas *pila, void(* func)(void*));
+void imprimirPila(Pilas *pila, void (*func)(void *));
+void* Peek(Pilas *pila);
 
 
+
+
+// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios
+int** crearSubmatriz(int dim);
+// Función para liberar la memoria de una matriz
+void liberarMatriz(int** matriz, int dim);
+// Función para imprimir una matriz
+void imprimirMatriz(int** matriz, int dim);
+// Producto suma de dos matrices de tamaño dim x dim
+int** productoSuma(int dim, int** A, int** B);
 
 /*MATRICES 4x4
 // Función para imprimir una matriz de tamaño fijo 4x4

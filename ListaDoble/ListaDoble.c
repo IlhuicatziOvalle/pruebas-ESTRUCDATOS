@@ -4,7 +4,6 @@
 #include <time.h>
 #include "ListaDoble.h"
 
-
 void InicializarListaDoble(ListaDoble *lista) {
     lista->Head = NULL;
     lista->Tail = NULL;
@@ -144,56 +143,96 @@ void LiberarLista(ListaDoble *lista) {
     lista->size = 0;
 }
 
-void BorrarNodo(ListaDoble *lista, void *dato){
-    NodoDoble *curr = GetNodo(lista, dato);
-    if (curr == NULL) {
-        printf("No se encontro el nodo\n");
-        return;
+
+void push(Pilas *pila, void *dato) {
+    PushBack(pila, dato);  // Usamos la función PushBack de la lista doblemente enlazada
+}
+void* pop(Pilas *pila) {
+    if (estaVacia(pila)) {
+        return NULL;  // Si la pila está vacía
     }
-
-    if (curr->prev == NULL) {
-        lista->Head= curr->next;
-    } else {
-        curr->prev->next = curr->next;
-    }
-
-    if (curr->next == NULL) {
-        lista->Tail = curr->prev;
-    } else {
-        curr->next->prev = curr->prev;
-    }
-
-    free(curr);
-    lista->size--;
+    void *dato = Peek(pila);  // Copia el dato del nodo en el tope de la pila
+    BorrarPos(pila, pila->size - 1);  // Elimina el nodo en la posición final
+    return dato;  // Regresa el dato copiado
 }
-
-void push(Pilas *pila, void *dato){
-    PushBack(pila, dato);
+int estaVacia(Pilas *pila) {
+    return pila->size == 0;
 }
-void* pop(Pilas *pila){
-    void *copia=pila->Tail->dato;
-    BorrarNodo(pila,pila->Tail->dato);
-    return copia;
-}
-int estaVacia(Pilas *pila){
-    return pila->Head==NULL;
-}
-void imprimirPila(Pilas *pila, void(* func)(void*)){
+void imprimirPila(Pilas *pila, void (*func)(void *)) {
     Pilas aux;
-    InicializarListaDoble(&aux);
-    void *dato=NULL;
+    InicializarListaDoble(&aux);  // Inicializar la pila auxiliar
+    
+    void *temp = NULL;
 
-    while(pila->size != 0){
-        dato=pop(pila);
-        func(dato);
-        push(&aux,dato);
+    // Extraer e imprimir los elementos de la pila original
+    while (!estaVacia(pila)) {
+        temp = pop(pila);
+        func(temp);  // Llamar a la función para imprimir el dato
+        push(&aux, temp);  // Guardar el dato en la pila auxiliar
     }
+    
     printf("\n");
 
-    while(aux.size != 0){
-        dato=pop(&aux);
-        push(pila,dato);
+    // Restaurar los elementos en la pila original desde la pila auxiliar
+    while (!estaVacia(&aux)) {
+        temp = pop(&aux);
+        push(pila, temp);
     }
+
+    LiberarLista(&aux);  // Liberar la pila auxiliar
+}
+
+void* Peek(Pilas *pila) {
+    if (pila->Tail != NULL) {
+        return pila->Tail->dato;
+    }
+    return NULL; // Si la pila está vacía
+}
+
+
+// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios
+int** crearSubmatriz(int dim) {
+    int** matriz = (int**)malloc(dim * sizeof(int*));
+    for (int i = 0; i < dim; i++) {
+        matriz[i] = (int*)malloc(dim * sizeof(int));
+        for (int j = 0; j < dim; j++) {
+            matriz[i][j] = rand() % 10;  // Inicializa con valores aleatorios entre 0 y 9
+        }
+    }
+    return matriz;
+}
+
+// Función para liberar la memoria de una matriz
+void liberarMatriz(int** matriz, int dim) {
+    for (int i = 0; i < dim; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+}
+
+// Función para imprimir una matriz
+void imprimirMatriz(int** matriz, int dim) {
+    for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Producto suma de dos matrices de tamaño dim x dim
+int** productoSuma(int dim, int** A, int** B) {
+    int** C = (int**)malloc(dim * sizeof(int*));
+    for (int i = 0; i < dim; i++) {
+        C[i] = (int*)malloc(dim * sizeof(int));
+        for (int j = 0; j < dim; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < dim; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+    return C;
 }
 
 
