@@ -5,8 +5,17 @@
 #include "ListaDoble/ListaDoble.h"  // Asegúrate de que este archivo incluya las declaraciones necesarias
 
 int main() {
-    int subDim = 4;  // Puedes ajustar esto a 1000 para el tamaño máximo
+    int subDim = 1000;  // Puedes ajustar esto a 1000 para el tamaño máximo
 
+
+    // Inicialización de las matrices A y B con valores aleatorios
+    int** A = crearSubmatriz(subDim, 1);  // 1 indica que los valores serán aleatorios
+    int** B = crearSubmatriz(subDim, 1);  // 1 indica que los valores serán aleatorios
+
+    // Realiza el producto-suma para las matrices
+    int** C = productoSuma(subDim, A, B);
+    /*MATRIZ 4x4
+    
     // Inicialización de las matrices con valores específicos
     int** A = (int**)malloc(subDim * sizeof(int*));
     int** B = (int**)malloc(subDim * sizeof(int*));
@@ -37,7 +46,7 @@ int main() {
     }
 
     // Realiza el producto-suma para las matrices
-    int** C = productoSuma(subDim, A, B);
+    int** C = productoSuma(subDim, A, B);*/
 
     // Imprime las matrices y los resultados
     printf("Matriz A:\n");
