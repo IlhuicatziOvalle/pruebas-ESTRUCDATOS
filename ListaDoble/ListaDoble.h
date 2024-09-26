@@ -13,6 +13,11 @@ typedef struct _ListaDoble{
 } ListaDoble;
 
 
+typedef struct _Cliente{
+    int articulos;
+    int ticks_pagos;
+}Cliente;
+
 
 void InicializarListaDoble(ListaDoble *lista);
 void PushFront(ListaDoble *lista, void *item);
@@ -26,6 +31,7 @@ int BorrarPos(ListaDoble *lista, int pos);
 void ImprimirLista(const ListaDoble *const, void (*func)(void *));
 void LiberarLista(ListaDoble *lista);
 
+
 typedef ListaDoble Pilas;
 
 void push(Pilas *pila, void *dato);
@@ -34,22 +40,15 @@ int estaVacia(Pilas *pila);
 void imprimirPila(Pilas *pila, void (*func)(void *));
 void* Peek(Pilas *pila);
 
+typedef ListaDoble Colas;
 
+void pushCola(Colas *cola, void *dato);
+void* popCola(Colas *cola);
+void* PeekCola(Colas *cola);
+int EstaVaciaCola(Colas *cola);
+void imprimirCola(Colas *cola, void (*func)(void *));
 
+Cliente* crearCliente();
+void imprimirCliente(void *data);// imprimir los detalles del cliente
 
-// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios o específicos
-int** crearSubmatriz(int dim, int valoresAleatorios);
-// Función para liberar la memoria de una matriz
-void liberarMatriz(int** matriz, int dim);
-
-// Producto suma de dos matrices de tamaño dim x dim
-int** productoSuma(int dim, int** A, int** B);
-
-// Función para imprimir una matriz en el formato solicitado
-void imprimirMatriz(int** matriz, int dim);
-/*MATRICES 4x4
-// Función para imprimir una matriz de tamaño fijo 4x4
-void imprimirMatriz(int matriz[4][4], int tamano);
-
-// Función para realizar el producto de matrices de tamaño fijo 4x4
-void productoMatrices(int A[4][4], int B[4][4], int resultado[4][4], int tamano);*/
+void Supermercado(); //logica supermercado

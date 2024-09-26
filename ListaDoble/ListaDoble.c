@@ -144,6 +144,7 @@ void LiberarLista(ListaDoble *lista) {
 }
 
 
+
 void push(Pilas *pila, void *dato) {
     PushBack(pila, dato);  // Usamos la función PushBack de la lista doblemente enlazada
 }
@@ -190,86 +191,169 @@ void* Peek(Pilas *pila) {
 }
 
 
-// Función para crear una submatriz de tamaño dim x dim e inicializarla con valores aleatorios o específicos
-int** crearSubmatriz(int dim, int valoresAleatorios) {
-    int** matriz = (int**)malloc(dim * sizeof(int*));
-    for (int i = 0; i < dim; i++) {
-        matriz[i] = (int*)malloc(dim * sizeof(int));
-        for (int j = 0; j < dim; j++) {
-            if (valoresAleatorios) {
-                matriz[i][j] = rand() % 10;  // Inicializa con valores aleatorios entre 0 y 9
-            } else {
-                matriz[i][j] = 0;  // Inicializa con ceros
-            }
-        }
-    }
-    return matriz;
+void pushCola(Colas *cola, void* dato){
+    PushBack(cola, dato); 
 }
-
-// Función para liberar la memoria de una matriz
-void liberarMatriz(int** matriz, int dim) {
-    for (int i = 0; i < dim; i++) {
-        free(matriz[i]);
+void* popCola(Colas *cola){
+    if (EstaVaciaCola(cola)) {
+        printf("Error: La cola está vacía.\n");
+        return NULL; // Si la cola está vacía, retornamos NULL
     }
-    free(matriz);
-}
-
-// Producto suma de dos matrices de tamaño dim x dim
-int** productoSuma(int dim, int** A, int** B) {
-    int** C = (int**)malloc(dim * sizeof(int*));
-    for (int i = 0; i < dim; i++) {
-        C[i] = (int*)malloc(dim * sizeof(int));
-        for (int j = 0; j < dim; j++) {
-            C[i][j] = 0;
-            for (int k = 0; k < dim; k++) {
-                C[i][j] += A[i][k] * B[k][j];
-            }
-        }
+    NodoDoble *nodo = cola->Head;
+    void *copia = nodo->dato; // Guardamos el dato del nodo frontal
+    cola->Head = nodo->next;  // Movemos la cabeza al siguiente nodo
+    if (cola->Head == NULL) { // Si ahora la cabeza es NULL, la cola está vacía
+        cola->Tail = NULL;
+    } else {
+        cola->Head->prev = NULL;
     }
-    return C;
-}
-
-// Función para imprimir una matriz en el formato solicitado
-void imprimirMatriz(int** matriz, int dim) {
-    for (int i = 0; i < dim; i++) {
-        printf("[ ");
-        for (int j = 0; j < dim; j++) {
-            printf("%d", matriz[i][j]);
-            if (j < dim - 1) {
-                printf(", ");
-            }
-        }
-        printf(" ]\n");
-    }
-}
-
-
-/*MATRIZ 4x4
-// Función para imprimir una matriz de tamaño fijo 4x4
-void imprimirMatriz(int matriz[4][4], int tamano) {
-    for (int i = 0; i < tamano; i++) {
-        for (int j = 0; j < tamano; j++) {
-            printf("%d ", matriz[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-// Función para realizar el producto de matrices de tamaño fijo 4x4
-void productoMatrices(int A[4][4], int B[4][4], int resultado[4][4], int tamano) {
-    // Inicializar la matriz resultado a 0
-    for (int i = 0; i < tamano; i++) {
-        for (int j = 0; j < tamano; j++) {
-            resultado[i][j] = 0;
-        }
-    }
+    free(nodo);  // Liberamos el nodo eliminado
+    cola->size--; // Decrementamos el tamaño de la cola
+    return copia; // Retornamos el dato eliminado
     
-    // Realizar el producto de matrices
-    for (int i = 0; i < tamano; i++) {
-        for (int j = 0; j < tamano; j++) {
-            for (int k = 0; k < tamano; k++) {
-                resultado[i][j] += A[i][k] * B[k][j]; // Producto-suma
+}void* PeekCola(Colas *cola){
+    if (cola->Head == NULL) {
+        printf("Error: La cola está vacía.\n");
+        return NULL;
+    }
+    // Retornamos el dato en la cabeza (sin eliminarlo).
+    return cola->Head->dato;
+}
+
+int EstaVaciaCola(Colas *cola){
+    return cola->Head==NULL;
+}
+void imprimirCola(Colas *cola, void (*func)(void *)){
+    Colas aux;
+    void *dato = NULL;
+    InicializarListaDoble(&aux);
+
+    while (cola->size != 0) {
+        dato=popCola(cola);
+        func(dato);  // Se imprime el dato
+        pushCola(&aux, dato);  // Se pasa a la cola auxiliar
+    }
+
+    // Restaurar la cola original
+    while (aux.size != 0) {
+        dato=popCola(&aux);
+        pushCola(cola, dato);
+    }
+
+    LiberarLista(&aux);  // Liberar la cola auxiliar
+}
+
+
+//crear cliente
+Cliente *crearCliente(){
+    Cliente *nuevoCliente=(Cliente*)malloc(sizeof(Cliente));
+    nuevoCliente->articulos=rand() %20 + 1; //cantidad lista articulos(1-20)
+    nuevoCliente->ticks_pagos=rand() % 100 + 1; //cantidad iteraciones(1-100)
+    return nuevoCliente;
+}
+void imprimirCliente(void *data){
+    Cliente *cliente = (Cliente*)data;
+    printf("Cliente con %d artículos, tardará %d ticks en pagar.\n", cliente->articulos, cliente->ticks_pagos);
+}
+
+
+
+void Supermercado(){
+    ListaDoble Principal;
+    ListaDoble Emergencia;
+    ListaDoble caja1;
+    ListaDoble caja2;
+    ListaDoble caja3;
+
+    InicializarListaDoble(&Principal);
+    InicializarListaDoble(&Emergencia);
+    InicializarListaDoble(&caja1);
+    InicializarListaDoble(&caja2);
+    InicializarListaDoble(&caja3);
+
+
+    int ticks=0;
+    int clientesAtendidos=0;
+
+    while (ticks < 100000 || Principal.size > 0 || Emergencia.size > 0 || caja1.size > 0 || caja2.size > 0 || caja3.size > 0) {
+        // Cada 100 ticks, un cliente nuevo entra
+        if(ticks<100000 && ticks %100 == 0){ //max ticks del supermercado 100000
+            Cliente *nuevoCliente=crearCliente();
+            if(Principal.size<25){ //max clientes fila principal 25
+                pushCola(&Principal, nuevoCliente);
+                printf("Nuevo cliente entra a fila principal \n");
+                
+            }else if(Emergencia.size<25){ //max clientes fila emergencia 25
+                pushCola(&Emergencia,nuevoCliente);
+                printf("Nuevo cliente entra a fila emergencia\n");
+                 imprimirCliente(nuevoCliente); 
+
+            }else{
+                printf("Supermercado lleno, cliente no puede entrar\n");
+                free(nuevoCliente); //Liberar memoria del cliente si no entro
             }
         }
+        //revisar cajas
+        if(caja1.size < 3 && Principal.size > 0 ){ //max en cola de caja 3 
+            Cliente *cliente=(Cliente *)popCola(&Principal);
+            pushCola(&caja1, cliente);
+            printf("Cliente movido a caja 1\n");
+        }
+        if(caja2.size<3 && Principal.size > 0 ){
+            Cliente *cliente=(Cliente *)popCola(&Principal);
+            pushCola(&caja2, cliente);
+            printf("Cliente movido a caja 2\n");
+        }
+        if(caja3.size<3 && Principal.size > 0){
+            Cliente *cliente=(Cliente *)popCola(&Principal);
+            pushCola(&caja3, cliente);
+            printf("Cliente movido a caja 3\n");
+        }
+        //Procesa a los clientes en cada caja
+        if (!EstaVaciaCola(&caja1)) {
+            Cliente *cliente = (Cliente*) PeekCola(&caja1);
+             imprimirCliente(cliente); 
+            cliente->ticks_pagos--;
+            if (cliente->ticks_pagos <= 0) {
+                popCola(&caja1);
+                printf("Cliente atendido en la caja 1.\n");
+                clientesAtendidos++;
+                free(cliente);  // Liberar memoria después de ser atendido
+            }
+        }
+        if (!EstaVaciaCola(&caja2)) {
+            Cliente *cliente = (Cliente*) PeekCola(&caja2);
+            imprimirCliente(cliente); 
+            cliente->ticks_pagos--;
+            if (cliente->ticks_pagos <= 0) {
+                popCola(&caja2);
+                printf("Cliente atendido en la caja 2.\n");
+                clientesAtendidos++;
+                free(cliente);  // Liberar memoria después de ser atendido
+            }
+        }
+        if (!EstaVaciaCola(&caja3)) {
+            Cliente *cliente = (Cliente*) PeekCola(&caja3);
+            imprimirCliente(cliente); 
+            cliente->ticks_pagos--;
+            if (cliente->ticks_pagos <= 0) {
+                popCola(&caja3);
+                printf("Cliente atendido en la caja 3.\n");
+                clientesAtendidos++;
+                free(cliente);  // Liberar memoria después de ser atendido
+            }
+        }
+
+        // Incrementamos los ticks del supermercado
+        ticks++;
     }
-}*/
+
+    printf("Simulación terminada. Total de clientes atendidos: %d\n", clientesAtendidos);
+
+    // Liberar listas restantes (si quedan clientes)
+    LiberarLista(&Principal);
+    LiberarLista(&Emergencia);
+    LiberarLista(&caja1);
+    LiberarLista(&caja2);
+    LiberarLista(&caja3);
+}
