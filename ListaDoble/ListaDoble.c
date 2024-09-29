@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "ListaDoble.h"
+#include <unistd.h>
 
 void InicializarListaDoble(ListaDoble *lista) {
     lista->Head = NULL;
@@ -242,118 +243,60 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
 
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
-
-
-//crear cliente
-Cliente *crearCliente(){
-    Cliente *nuevoCliente=(Cliente*)malloc(sizeof(Cliente));
-    nuevoCliente->articulos=rand() %20 + 1; //cantidad lista articulos(1-20)
-    nuevoCliente->ticks_pagos=rand() % 100 + 1; //cantidad iteraciones(1-100)
-    return nuevoCliente;
+Cliente *GenerarCliente() {
+    Cliente *nuevo_cliente = (Cliente *)malloc(sizeof(Cliente));
+    if (nuevo_cliente == NULL) {
+        printf("Error: No se pudo asignar memoria para el nuevo cliente\n");
+        return NULL;
+    }
+    static int id = 1;
+    sprintf(nuevo_cliente->nombre, "Cliente %d", id++);
+    nuevo_cliente->tiempo_maximo_ejecucion = rand() % 5 + 1; // Tiempo de 1 a 5 ticks
+    nuevo_cliente->tiempo_actual_ejecutando = 0;
+    return nuevo_cliente;
 }
-void imprimirCliente(void *data){
-    Cliente *cliente = (Cliente*)data;
-    printf("Cliente con %d artículos, tardará %d ticks en pagar.\n", cliente->articulos, cliente->ticks_pagos);
+
+void ImprimirCliente(Cliente *cliente) {
+    printf("Nombre: %s, Tiempo máximo: %d, Tiempo actual: %d\n",
+           cliente->nombre, cliente->tiempo_maximo_ejecucion, cliente->tiempo_actual_ejecutando);
 }
 
+void SimularAtencionClientes() {
+    ListaDoble cola_espera;
+    InicializarListaDoble(&cola_espera);
+    
+    srand(time(NULL));
+    int total_clientes_atendidos = 0;
 
-
-void Supermercado(){
-    ListaDoble Principal;
-    ListaDoble Emergencia;
-    ListaDoble caja1;
-    ListaDoble caja2;
-    ListaDoble caja3;
-
-    InicializarListaDoble(&Principal);
-    InicializarListaDoble(&Emergencia);
-    InicializarListaDoble(&caja1);
-    InicializarListaDoble(&caja2);
-    InicializarListaDoble(&caja3);
-
-
-    int ticks=0;
-    int clientesAtendidos=0;
-
-    while (ticks < 100000 || Principal.size > 0 || Emergencia.size > 0 || caja1.size > 0 || caja2.size > 0 || caja3.size > 0) {
-        // Cada 100 ticks, un cliente nuevo entra
-        if(ticks<100000 && ticks %100 == 0){ //max ticks del supermercado 100000
-            Cliente *nuevoCliente=crearCliente();
-            if(Principal.size<25){ //max clientes fila principal 25
-                pushCola(&Principal, nuevoCliente);
-                printf("Nuevo cliente entra a fila principal \n");
-                
-            }else if(Emergencia.size<25){ //max clientes fila emergencia 25
-                pushCola(&Emergencia,nuevoCliente);
-                printf("Nuevo cliente entra a fila emergencia\n");
-                 imprimirCliente(nuevoCliente); 
-
-            }else{
-                printf("Supermercado lleno, cliente no puede entrar\n");
-                free(nuevoCliente); //Liberar memoria del cliente si no entro
+    while (total_clientes_atendidos < 10) {
+        // Generar un nuevo cliente y agregar a la cola
+        Cliente *nuevo_cliente = GenerarCliente();
+        PushBack(&cola_espera, nuevo_cliente);
+        printf("-> %s entro a la cola de espera\n", nuevo_cliente->nombre);
+        
+        // Procesar el cliente en ejecución
+        if (cola_espera.size > 0) {
+            Cliente *cliente_actual = (Cliente *)popCola(&cola_espera);
+            printf("Atendiendo a %s\n", cliente_actual->nombre);
+            while (cliente_actual->tiempo_actual_ejecutando < cliente_actual->tiempo_maximo_ejecucion) {
+                cliente_actual->tiempo_actual_ejecutando++;
+                printf("  -> %s está en uso: Tick %d\n", cliente_actual->nombre, cliente_actual->tiempo_actual_ejecutando);
+                // Simular el tiempo de espera de nuevos clientes
+                if (rand() % 3 == 0) { // 33% de probabilidad de que un nuevo cliente entre
+                    Cliente *nuevo_cliente_en_cola = GenerarCliente();
+                    PushBack(&cola_espera, nuevo_cliente_en_cola);
+                    printf("  -> %s entro a la cola de espera\n", nuevo_cliente_en_cola->nombre);
+                }
+                sleep(1); // Simular el tiempo de procesamiento (1 segundo por tick)
             }
+            printf("-> %s ha terminado su atención\n", cliente_actual->nombre);
+            free(cliente_actual);
+            total_clientes_atendidos++;
         }
-        //revisar cajas
-        if(caja1.size < 3 && Principal.size > 0 ){ //max en cola de caja 3 
-            Cliente *cliente=(Cliente *)popCola(&Principal);
-            pushCola(&caja1, cliente);
-            printf("Cliente movido a caja 1\n");
-        }
-        if(caja2.size<3 && Principal.size > 0 ){
-            Cliente *cliente=(Cliente *)popCola(&Principal);
-            pushCola(&caja2, cliente);
-            printf("Cliente movido a caja 2\n");
-        }
-        if(caja3.size<3 && Principal.size > 0){
-            Cliente *cliente=(Cliente *)popCola(&Principal);
-            pushCola(&caja3, cliente);
-            printf("Cliente movido a caja 3\n");
-        }
-        //Procesa a los clientes en cada caja
-        if (!EstaVaciaCola(&caja1)) {
-            Cliente *cliente = (Cliente*) PeekCola(&caja1);
-             imprimirCliente(cliente); 
-            cliente->ticks_pagos--;
-            if (cliente->ticks_pagos <= 0) {
-                popCola(&caja1);
-                printf("Cliente atendido en la caja 1.\n");
-                clientesAtendidos++;
-                free(cliente);  // Liberar memoria después de ser atendido
-            }
-        }
-        if (!EstaVaciaCola(&caja2)) {
-            Cliente *cliente = (Cliente*) PeekCola(&caja2);
-            imprimirCliente(cliente); 
-            cliente->ticks_pagos--;
-            if (cliente->ticks_pagos <= 0) {
-                popCola(&caja2);
-                printf("Cliente atendido en la caja 2.\n");
-                clientesAtendidos++;
-                free(cliente);  // Liberar memoria después de ser atendido
-            }
-        }
-        if (!EstaVaciaCola(&caja3)) {
-            Cliente *cliente = (Cliente*) PeekCola(&caja3);
-            imprimirCliente(cliente); 
-            cliente->ticks_pagos--;
-            if (cliente->ticks_pagos <= 0) {
-                popCola(&caja3);
-                printf("Cliente atendido en la caja 3.\n");
-                clientesAtendidos++;
-                free(cliente);  // Liberar memoria después de ser atendido
-            }
-        }
-
-        // Incrementamos los ticks del supermercado
-        ticks++;
     }
 
-    printf("Simulación terminada. Total de clientes atendidos: %d\n", clientesAtendidos);
-
-    // Liberar listas restantes (si quedan clientes)
-    LiberarLista(&Principal);
-    LiberarLista(&Emergencia);
-    LiberarLista(&caja1);
-    LiberarLista(&caja2);
-    LiberarLista(&caja3);
+    // Liberar cola de espera
+    while (cola_espera.size > 0) {
+        free(popCola(&cola_espera));
+    }
 }

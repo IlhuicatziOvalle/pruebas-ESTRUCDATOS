@@ -12,11 +12,11 @@ typedef struct _ListaDoble{
     int size;
 } ListaDoble;
 
-
-typedef struct _Cliente{
-    int articulos;
-    int ticks_pagos;
-}Cliente;
+typedef struct {
+    char nombre[50];
+    int tiempo_maximo_ejecucion;
+    int tiempo_actual_ejecutando;
+} Cliente;
 
 
 void InicializarListaDoble(ListaDoble *lista);
@@ -48,7 +48,8 @@ void* PeekCola(Colas *cola);
 int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
 
-Cliente* crearCliente();
-void imprimirCliente(void *data);// imprimir los detalles del cliente
 
-void Supermercado(); //logica supermercado
+Cliente *GenerarCliente();
+
+void imprimirCliente(Cliente *cliente);
+void SimularAtencionClientes();
