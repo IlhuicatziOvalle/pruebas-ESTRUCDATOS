@@ -49,7 +49,7 @@ int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
 
 
-Cliente *GenerarCliente();
-
-void imprimirCliente(Cliente *cliente);
+void imrpimirCliente(void *cliente);
+void ejecutar_cliente(Cliente *cliente);
+Cliente *generar_cliente();
 void SimularAtencionClientes();
