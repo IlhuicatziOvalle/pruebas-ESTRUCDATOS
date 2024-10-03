@@ -25,7 +25,9 @@ typedef struct _Caja {
     Cliente *cliente_atendiendo;   // Cliente actual en ejecución
 } Caja;
 
-
+void ImprimirNumeros(void *dato);
+void printfdatodeseado(void *dato);
+void imprimirPalabras(void *dato);
 void InicializarListaDoble(ListaDoble *lista);
 void PushFront(ListaDoble *lista, void *item);
 void PushBack(ListaDoble *lista, void *item);

@@ -5,6 +5,17 @@
 #include "ListaDoble.h"
 #include <unistd.h>
 
+void ImprimirNumeros(void *dato)
+{
+    printf("%d\n", *(int *)dato);
+}
+void printfdatodeseado(void *dato){
+    printf("%c ", *(char *)dato);
+}
+void imprimirPalabras(void *dato) {
+    printf("%s\n", (char *)dato);
+}
+
 void InicializarListaDoble(ListaDoble *lista) {
     lista->Head = NULL;
     lista->Tail = NULL;
@@ -282,16 +293,22 @@ void SimularAtencionClientes() {
     int limite_emergencia = 25;
 
     // Bucle principal de la simulación
-    while (tick_simulacion < 1000) {
+    while (tick_simulacion < 10000) {
         // Cada 100 ticks, generamos un nuevo cliente
         if (tick_simulacion % 100 == 0) {
             Cliente *nuevo_cliente = generar_cliente();
             if (FilaPrincipal.size < limite_principal) {
                 pushCola(&FilaPrincipal, nuevo_cliente);
                 printf(">> %s entró a la fila principal\n", nuevo_cliente->nombre);
+                printf(" Fila Principal: ");
+                imprimirCola(&FilaPrincipal,printfdatodeseado);
+                printf("\n");
             } else if (FilaEmergencia.size < limite_emergencia) {
                 pushCola(&FilaEmergencia, nuevo_cliente);
                 printf(">> %s entró a la fila de emergencia\n", nuevo_cliente->nombre);
+                printf(" Fila Emergencia: ");
+                imprimirCola(&FilaEmergencia,printfdatodeseado);
+                printf("\n");
             } else {
                 printf(">> No se pudo agregar un nuevo cliente, filas llenas\n");
                 free(nuevo_cliente);

@@ -6,16 +6,7 @@
 #include <unistd.h>
 
 
-void ImprimirNumeros(void *dato)
-{
-    printf("%d\n", *(int *)dato);
-}
-void printfdatodeseado(void *dato){
-    printf("%c ", *(char *)dato);
-}
-void imprimirPalabras(void *dato) {
-    printf("%s\n", (char *)dato);
-}
+
 
 int main() {
     SimularAtencionClientes();
