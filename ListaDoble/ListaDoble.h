@@ -12,11 +12,18 @@ typedef struct _ListaDoble{
     int size;
 } ListaDoble;
 
-typedef struct {
-    char nombre[50];
-    int tiempo_maximo_ejecucion;
-    int tiempo_actual_ejecutando;
+typedef struct _Cliente {
+    char nombre[30];
+    int num_articulos; // Número de artículos
+    int tiempo_por_articulo; // Tiempo que tarda en pagar cada artículo
+    int tiempo_restante; // Ticks restantes para terminar el pago
+   
 } Cliente;
+
+typedef struct _Caja {
+    ListaDoble clientes_en_espera; // Lista de clientes en espera (máximo 2)
+    Cliente *cliente_atendiendo;   // Cliente actual en ejecución
+} Caja;
 
 
 void InicializarListaDoble(ListaDoble *lista);

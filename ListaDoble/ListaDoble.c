@@ -244,39 +244,37 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
 
-void imrpimirCliente(void *cliente) {
-    Cliente *c = (Cliente *)cliente;
-    printf("Nombre: %s \n Tiempo maximo: %d \n Tiempo actual: %d\n", c->nombre, c->tiempo_maximo_ejecucion, c->tiempo_actual_ejecutando);
-}
+
 
 void ejecutar_cliente(Cliente *cliente) {
-    cliente->tiempo_actual_ejecutando++;
+    if (cliente->tiempo_restante > 0) {
+        cliente->tiempo_restante--;  // Reducimos 1 tick en cada iteración
+    }
 }
-
 Cliente *generar_cliente() {
     Cliente *nuevo_cliente = (Cliente *)malloc(sizeof(Cliente));
     if (nuevo_cliente == NULL) {
-        printf("Error: No se pudo asignar memoria para el nuevo trabajo\n");
+        printf("Error: No se pudo asignar memoria para el nuevo cliente\n");
         return NULL;
     }
     static int id = 1;
-    sprintf(nuevo_cliente->nombre, "cliente %d", id++);
-    nuevo_cliente->tiempo_maximo_ejecucion = rand() % 100 + 1; 
-    nuevo_cliente->tiempo_actual_ejecutando = 0;
+    sprintf(nuevo_cliente->nombre, "Cliente %d", id++);
+    nuevo_cliente->num_articulos = rand() % 10 + 1; // Entre 1 y 10 artículos
+    nuevo_cliente->tiempo_por_articulo = rand() % 100 + 1; // Entre 1 y 100 ticks por artículo
+    nuevo_cliente->tiempo_restante = nuevo_cliente->num_articulos * nuevo_cliente->tiempo_por_articulo;
     return nuevo_cliente;
-
 }
 void SimularAtencionClientes() {
-     FILE *archivo = fopen("milog.txt", "w");
-    if (archivo == NULL) {
-        printf("Error al abrir el archivo para escritura.\n");
-        return;
+    ListaDoble FilaPrincipal;
+    ListaDoble FilaEmergencia;
+    InicializarListaDoble(&FilaPrincipal);
+    InicializarListaDoble(&FilaEmergencia);
+
+    Caja cajas[3];
+    for (int i = 0; i < 3; i++) {
+        InicializarListaDoble(&cajas[i].clientes_en_espera);
+        cajas[i].cliente_atendiendo = NULL;
     }
-    
-    ListaDoble Principal;
-    ListaDoble Emergencia;
-    InicializarListaDoble(&Principal);
-    InicializarListaDoble(&Emergencia);
 
     srand(time(NULL));
     int tick_simulacion = 0;
@@ -284,78 +282,50 @@ void SimularAtencionClientes() {
     int limite_emergencia = 25;
 
     // Bucle principal de la simulación
-    while (tick_simulacion < 100000) {
-        if (Principal.size == 0 && Emergencia.size != 0) {
-            Cliente *nuevo_cliente = (Cliente *)popCola(&Emergencia);
-            pushCola(&Principal, nuevo_cliente);
-            printf("-> %s entró a ejecución desde la fila de emergencia\n", nuevo_cliente->nombre);
-        } else if (Principal.size > 0) {
-            Cliente *cliente_actual = (Cliente *)Peek(&Principal);
-            if (cliente_actual->tiempo_actual_ejecutando >= cliente_actual->tiempo_maximo_ejecucion) {
-                printf("-> %s terminó su ejecución\n", cliente_actual->nombre);
-                fprintf(archivo, "Cliente atendido: %s\n", cliente_actual->nombre);
-                free(popCola(&Principal));
-                if (Emergencia.size != 0) {
-                    Cliente *nuevo_cliente = (Cliente *)popCola(&Emergencia);
-                    pushCola(&Principal, nuevo_cliente);
-                    printf("-> %s entró a ejecución desde la fila de emergencia\n", nuevo_cliente->nombre);
-                }
+    while (tick_simulacion < 1000) {
+        // Cada 100 ticks, generamos un nuevo cliente
+        if (tick_simulacion % 100 == 0) {
+            Cliente *nuevo_cliente = generar_cliente();
+            if (FilaPrincipal.size < limite_principal) {
+                pushCola(&FilaPrincipal, nuevo_cliente);
+                printf(">> %s entró a la fila principal\n", nuevo_cliente->nombre);
+            } else if (FilaEmergencia.size < limite_emergencia) {
+                pushCola(&FilaEmergencia, nuevo_cliente);
+                printf(">> %s entró a la fila de emergencia\n", nuevo_cliente->nombre);
             } else {
-                if (cliente_actual->tiempo_actual_ejecutando % 100 == 0) {
-                    printf("-> Se está ejecutando en el ciclo %d:\n", cliente_actual->tiempo_actual_ejecutando);
-                    printf("      Nombre: %s\n", cliente_actual->nombre);
-                    printf("      Tiempo ejecutando: %d u\n", cliente_actual->tiempo_actual_ejecutando);
-                    printf("      Tiempo máximo: %d u\n", cliente_actual->tiempo_maximo_ejecucion);
-                }
-                ejecutar_cliente(cliente_actual);
+                printf(">> No se pudo agregar un nuevo cliente, filas llenas\n");
+                free(nuevo_cliente);
             }
         }
 
-        // Cada 100 ticks, se genera un nuevo cliente si estamos dentro del límite de 100000 ticks
-        if (tick_simulacion < 100000 && tick_simulacion % 100 == 0) {
-            if (Principal.size < limite_principal) {
-                Cliente *nuevo_cliente = generar_cliente();
-                if (nuevo_cliente != NULL) {
-                    pushCola(&Principal, nuevo_cliente);
-                    printf("-> %s entró a la fila principal\n", nuevo_cliente->nombre);
+        // Asignar clientes a las cajas
+        for (int i = 0; i < 3; i++) {
+            if (cajas[i].cliente_atendiendo == NULL && FilaPrincipal.size > 0) {
+                cajas[i].cliente_atendiendo = (Cliente *)popCola(&FilaPrincipal);
+                printf(" %s está siendo atendido en la caja %d\n", cajas[i].cliente_atendiendo->nombre, i + 1);
+                printf(" Numero de articulos: %d \n", cajas[i].cliente_atendiendo->tiempo_por_articulo);
+                printf(" Ticks: %d \n", cajas[i].cliente_atendiendo->tiempo_por_articulo);
+            }
+        }
+   
+        // Ejecutar clientes en las cajas
+        for (int i = 0; i < 3; i++) {
+            if (cajas[i].cliente_atendiendo != NULL) {
+                ejecutar_cliente(cajas[i].cliente_atendiendo);
+                if (cajas[i].cliente_atendiendo->tiempo_restante <= 0) {
+                    printf("<> %s terminó en la caja %d\n", cajas[i].cliente_atendiendo->nombre, i + 1);
+                    free(cajas[i].cliente_atendiendo);
+                    cajas[i].cliente_atendiendo = NULL;
+                    if (cajas[i].clientes_en_espera.size > 0) {
+                        cajas[i].cliente_atendiendo = (Cliente *)popCola(&cajas[i].clientes_en_espera);
+                    }
                 }
-            } else if (Emergencia.size < limite_emergencia) {
-                Cliente *nuevo_cliente = generar_cliente();
-                if (nuevo_cliente != NULL) {
-                    pushCola(&Emergencia, nuevo_cliente);
-                    printf("-> %s entró a la fila de emergencia\n", nuevo_cliente->nombre);
-                }
-            } else {
-                printf("-> No se pudo agregar un nuevo cliente, filas llenas\n");
             }
         }
 
         tick_simulacion++;
     }
 
-    // A partir de aquí, no se atienden nuevos clientes; solo se atienden los que están en las filas
-    while (Principal.size > 0 || Emergencia.size > 0) {
-        if (Principal.size > 0) {
-            Cliente *cliente_actual = (Cliente *)Peek(&Principal);
-            if (cliente_actual->tiempo_actual_ejecutando >= cliente_actual->tiempo_maximo_ejecucion) {
-                printf("-> %s terminó su ejecución\n", cliente_actual->nombre);
-                fprintf(archivo, "Cliente atendido: %s\n", cliente_actual->nombre);
-                free(popCola(&Principal));
-            } else {
-                ejecutar_cliente(cliente_actual);
-            }
-        } else if (Emergencia.size > 0) {
-            Cliente *nuevo_cliente = (Cliente *)popCola(&Emergencia);
-            pushCola(&Principal, nuevo_cliente);
-            printf("-> %s entró a ejecución desde la fila de emergencia\n", nuevo_cliente->nombre);
-        }
-    }
-
-    // Imprimir los ticks finales de la simulación
-    printf("La simulación ha finalizado exactamente después de 100,000 ticks.\n");
-    fprintf(archivo, "La simulación ha finalizado exactamente después de 100,000 ticks.\n");
-
-    fclose(archivo);
-    LiberarLista(&Principal);
-    LiberarLista(&Emergencia);
+    // Termina el supermercado, limpiar filas y cajas
+    printf("El supermercado ha cerrado\n");
 }
