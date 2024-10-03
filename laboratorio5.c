@@ -14,8 +14,8 @@ int main() {
  
 
     Clinica clinica;
-        InicializarListaDoble(&clinica.pacientes_en_espera);
-        clinica.paciente_atendiendo = NULL;
+    InicializarListaDoble(&clinica.pacientes_en_espera);
+    clinica.paciente_atendiendo = NULL;
     
 
     srand(time(NULL));
@@ -64,6 +64,7 @@ int main() {
 
     // Termina el supermercado, limpiar filas y clinica
     printf("La clinica ha cerrado\n");
-
+    
+   
     return 0;
 }
