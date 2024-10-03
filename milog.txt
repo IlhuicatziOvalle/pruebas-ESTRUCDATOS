@@ -1,3 +1,0 @@
-Cliente atendido: cliente 1
-Cliente atendido: cliente 2
-La simulación ha finalizado exactamente después de 100,000 ticks.

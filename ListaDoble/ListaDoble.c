@@ -273,4 +273,5 @@ Paciente *generar_paciente() {
     nuevo_paciente->tiempo_maximo_despacho = rand() % 100 + 1; // Entre 1 y 100 ticks por cliente
     nuevo_paciente->severidad_padecimiento =  rand() % 100 + 1; 
     return nuevo_paciente;
+    
 }

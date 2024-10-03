@@ -36,6 +36,8 @@ int main() {
                 free(nuevo_paciente);
             }
         }
+                 
+
 
         // Asignar clientes a las clinica
         if (clinica.paciente_atendiendo == NULL && Recepcion.size > 0) {
@@ -57,14 +59,16 @@ int main() {
                 }
             }
         }
-    
 
         tick_simulacion++;
     }
-
+              
     // Termina el supermercado, limpiar filas y clinica
     printf("La clinica ha cerrado\n");
     
+  
+    LiberarLista(&Recepcion); 
+    LiberarLista(&clinica.pacientes_en_espera);  
    
     return 0;
 }
