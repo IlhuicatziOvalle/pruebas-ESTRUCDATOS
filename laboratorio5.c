@@ -9,14 +9,14 @@
 
 
 int main() {
-    ListaDoble FilaPrincipal;
-    InicializarListaDoble(&FilaPrincipal);
+    ListaDoble Recepcion;
+    InicializarListaDoble(&Recepcion);
  
 
-    Clinica clinica[1];
-        InicializarListaDoble(&clinica[i].pacientes_en_espera);
-        clinica[i].paciente_atendiendo = NULL;
-    }
+    Clinica clinica;
+        InicializarListaDoble(&clinica.pacientes_en_espera);
+        clinica.paciente_atendiendo = NULL;
+    
 
     srand(time(NULL));
     int tick_simulacion = 0;
@@ -26,9 +26,9 @@ int main() {
     while (tick_simulacion < 1000) {
         if (tick_simulacion % 10 == 0) {
             Paciente *nuevo_paciente = generar_paciente();
-            if (FilaPrincipal.size < limite_Recepcion) {
-                pushCola(&FilaPrincipal, nuevo_paciente);
-                printf(">> %s entró a la fila principal\n", nuevo_paciente->nombre);
+            if (Recepcion.size < limite_Recepcion) {
+                pushCola(&Recepcion, nuevo_paciente);
+                printf(">> %s entró a recepcion\n", nuevo_paciente->nombre);
                 
             } 
             else {
@@ -38,29 +38,26 @@ int main() {
         }
 
         // Asignar clientes a las clinica
-        for (int i = 0; i < 1; i++) {
-            if (clinica[i].paciente_atendiendo == NULL && FilaPrincipal.size > 0) {
-                clinica[i].paciente_atendiendo = (Paciente *)popCola(&FilaPrincipal);
-                printf(" %s está siendo atendido en la clinica %d\n", clinica[i].paciente_atendiendo->nombre, i + 1);
-        
-                printf(" Nivel de severidad: %d \n", clinica[i].paciente_atendiendo->tiempo_maximo_despacho);
-            }
+        if (clinica.paciente_atendiendo == NULL && Recepcion.size > 0) {
+            clinica.paciente_atendiendo = (Paciente *)popCola(&Recepcion);
+            printf(" %s está siendo atendido en la clinica \n", clinica.paciente_atendiendo->nombre);
+            printf(" Nivel de severidad: %d \n", clinica.paciente_atendiendo->tiempo_maximo_despacho);
         }
+        
    
         // Ejecutar clientes en las clinica
-        for (int i = 0; i < 1; i++) {
-            if (clinica[i].paciente_atendiendo != NULL) {
-                ejecutar_paciente(clinica[i].paciente_atendiendo);
-                if (clinica[i].paciente_atendiendo->severidad_padecimiento <= 0) {
-                    printf("<> %s fue atendido en la clinica %d\n", clinica[i].paciente_atendiendo->nombre, i + 1);
-                    free(clinica[i].paciente_atendiendo);
-                    clinica[i].paciente_atendiendo = NULL;
-                    if (clinica[i].pacientes_en_espera.size > 0) {
-                        clinica[i].paciente_atendiendo = (Paciente *)popCola(&clinica[i].pacientes_en_espera);
-                    }
+        if (clinica.paciente_atendiendo != NULL) {
+            ejecutar_paciente(clinica.paciente_atendiendo);
+            if(clinica.paciente_atendiendo->severidad_padecimiento <= 0) {
+                printf("<> %s fue atendido en la clinica \n", clinica.paciente_atendiendo->nombre);
+                free(clinica.paciente_atendiendo);
+                clinica.paciente_atendiendo = NULL;
+                if (clinica.pacientes_en_espera.size > 0) {
+                    clinica.paciente_atendiendo = (Paciente *)popCola(&clinica.pacientes_en_espera);
                 }
             }
         }
+    
 
         tick_simulacion++;
     }
