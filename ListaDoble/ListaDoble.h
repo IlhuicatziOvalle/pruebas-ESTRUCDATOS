@@ -12,18 +12,17 @@ typedef struct _ListaDoble{
     int size;
 } ListaDoble;
 
-typedef struct _Cliente {
+typedef struct _Paciente {
     char nombre[30];
-    int num_articulos; // Número de artículos
-    int tiempo_por_articulo; // Tiempo que tarda en pagar cada artículo
-    int tiempo_restante; // Ticks restantes para terminar el pago
+    int tiempo_maximo_despacho; // Tiempo que tarda en pagar cada artículo
+    int severidad_padecimiento; // Ticks restantes para terminar el pago
    
-} Cliente;
+} Paciente;
 
-typedef struct _Caja {
-    ListaDoble clientes_en_espera; // Lista de clientes en espera (máximo 2)
-    Cliente *cliente_atendiendo;   // Cliente actual en ejecución
-} Caja;
+typedef struct _Clinica {
+    ListaDoble pacientes_en_espera; // Lista de clientes en espera (máximo 2)
+    Paciente *paciente_atendiendo;   // Cliente actual en ejecución
+} Clinica;
 
 void ImprimirNumeros(void *dato);
 void printfdatodeseado(void *dato);
@@ -58,7 +57,5 @@ int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
 
 
-void imrpimirCliente(void *cliente);
-void ejecutar_cliente(Cliente *cliente);
-Cliente *generar_cliente();
-void SimularAtencionClientes();
+void ejecutar_paciente(Paciente *cliente);
+Paciente *generar_paciente();
