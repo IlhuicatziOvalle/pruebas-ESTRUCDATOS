@@ -67,6 +67,7 @@ int main() {
     printf("La clinica ha cerrado\n");
     
   
+  
     LiberarLista(&Recepcion); 
     LiberarLista(&clinica.pacientes_en_espera);  
    
