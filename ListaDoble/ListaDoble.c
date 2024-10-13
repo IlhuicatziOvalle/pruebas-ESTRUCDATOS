@@ -254,24 +254,3 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
 
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
-
-
-
-void ejecutar_paciente(Paciente *cliente) {
-    if (cliente->severidad_padecimiento > 0) {
-        cliente->severidad_padecimiento--;  // Reducimos 1 tick en cada iteración
-    }
-}
-Paciente *generar_paciente() {
-    Paciente *nuevo_paciente = (Paciente *)malloc(sizeof(Paciente));
-    if (nuevo_paciente == NULL) {
-        printf("Error: No se pudo asignar memoria para el nuevo paciente\n");
-        return NULL;
-    }
-    static int id = 1;
-    sprintf(nuevo_paciente->nombre, "Paciente %d", id++);
-    nuevo_paciente->tiempo_maximo_despacho = rand() % 100 + 1; // Entre 1 y 100 ticks por cliente
-    nuevo_paciente->severidad_padecimiento =  rand() % 100 + 1; 
-    return nuevo_paciente;
-    
-}

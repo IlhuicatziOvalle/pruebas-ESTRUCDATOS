@@ -12,17 +12,6 @@ typedef struct _ListaDoble{
     int size;
 } ListaDoble;
 
-typedef struct _Paciente {
-    char nombre[30];
-    int tiempo_maximo_despacho; // Tiempo que tarda en pagar cada artículo
-    int severidad_padecimiento; // Ticks restantes para terminar el pago
-   
-} Paciente;
-
-typedef struct _Clinica {
-    ListaDoble pacientes_en_espera; // Lista de clientes en espera (máximo 2)
-    Paciente *paciente_atendiendo;   // Cliente actual en ejecución
-} Clinica;
 
 void ImprimirNumeros(void *dato);
 void printfdatodeseado(void *dato);
@@ -55,7 +44,3 @@ void* popCola(Colas *cola);
 void* PeekCola(Colas *cola);
 int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
-
-
-void ejecutar_paciente(Paciente *cliente);
-Paciente *generar_paciente();
