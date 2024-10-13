@@ -12,6 +12,19 @@ typedef struct _ListaDoble{
     int size;
 } ListaDoble;
 
+typedef struct _NodoBinario{
+    void* dato;
+    struct _NodoBinario* izq;
+    struct _NodoBinario* der;
+
+}NodoBinario;
+
+typedef struct _ArbolBinario{
+    NodoBinario *raiz;
+    int altura;
+    int tam;
+}ArbolBinario;
+
 
 void ImprimirNumeros(void *dato);
 void printfdatodeseado(void *dato);
@@ -44,3 +57,14 @@ void* popCola(Colas *cola);
 void* PeekCola(Colas *cola);
 int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
+
+int comparar(void *a,void *b);
+
+void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*));
+
+void AgregarArbol(ArbolBinario *arbol,void* dato,int (*com)(void*, void*));
+
+void PreOrden(const ArbolBinario *const arbol);
+void InOrden(const ArbolBinario *const arbol);
+void PostOrden(const ArbolBinario *const arbo);
+void printBFS(const ArbolBinario *const arbol);

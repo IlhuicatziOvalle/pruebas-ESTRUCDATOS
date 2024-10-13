@@ -254,3 +254,172 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
 
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
+
+int comparar(void *a,void *b){
+    int *int_a=(int *)a;
+    int *int_b=(int *)b;
+    return (*int_a - *int_b);
+}
+
+void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)){
+    //si raiz==NULLO
+    if(*raiz==NULL){
+        //*raiz=nuevo
+        *raiz=nuevo;
+        return;
+    }
+    //si el valor de raiz dato es menor que nuevo dato
+    if(comparar((*raiz)->dato, nuevo->dato) > 0){
+        AgregarNodo(&(*raiz)->izq,nuevo,comparar);
+    //de lo contrario
+    }else{
+        AgregarNodo(&(*raiz)->der,nuevo,comparar);
+    }
+}
+
+void AgregarArbol(ArbolBinario *arbol,void* dato,int (*com)(void*, void*)){
+    //crear el nodo nuevo
+    NodoBinario *nuevo = (NodoBinario *)malloc(sizeof(NodoBinario));
+    //asignar el dato de nodo nuevo a el dato a ingresar
+    nuevo->dato = dato;  
+    //poner el nodo izquierdo del nodo nuevo en nulo
+    nuevo->izq = NULL; 
+    //poner el nodo derecho del nodo nuevo en nulo
+    nuevo->der = NULL;
+    AgregarNodo(&(arbol->raiz),nuevo,com);
+    //incrementar tamaño del arbol en 1
+    arbol->tam++;
+}
+
+void PreOrden(const ArbolBinario *const arbol){
+    //si raiz de arbol nulo
+    if(arbol->raiz==NULL)
+        return;
+    //crear una pila
+    Pilas pila;
+    //inicializar pila
+    InicializarListaDoble(&pila);
+    //Push raiz a la pila
+    push(&pila, arbol->raiz);
+    //Mientras pila no vacia
+    while(!estaVacia(&pila)){
+        //pop de la pila guardar en un nodo temp
+        NodoBinario *temp=(NodoBinario *)pop(&pila);
+        //print dato del nodo temp
+        printfdatodeseado(temp->dato);
+        //si temp->derecho existe
+        if(temp->der!=NULL){
+            //Push temp->derecho a pila
+            push(&pila,temp->der);
+        }
+        //si temp->izquierdo existe
+        if(temp->izq!=NULL){
+            //Push temp->izquierdo a pila
+            push(&pila,temp->izq);
+        }
+    }
+    //liberar pila
+    LiberarLista(&pila);
+}
+void InOrden(const ArbolBinario *const arbol){
+    //si raiz del arbol es nulo
+    if(arbol->raiz==NULL)
+        return;
+    //crear pila
+    Pilas pila;
+    //inciializar la pila
+    InicializarListaDoble(&pila);
+    //nodo temp=arbol->raiz
+    NodoBinario *temp=arbol->raiz;
+    //mientras temp diferente de nulo 0 la pila no esta vacia
+    while(temp!=NULL || !estaVacia(&pila)){
+        //mientras temp diferente a nulo
+        while(temp!=NULL){
+            //Push a la pila temp
+            push(&pila,temp);
+            //temp=temp->izq
+            temp=temp->izq;
+        }
+        //temp es igual al pop de la pila
+        temp=(NodoBinario *)pop(&pila);
+        //imprimir el dato de temp
+        printfdatodeseado(temp->dato);
+        //temp=temp->der
+        temp=temp->der;
+    }
+    //liberar pil
+    LiberarLista(&pila);
+
+}
+void PostOrden(const ArbolBinario *const arbol){
+    //si arbol->raiz es nulo
+    if(arbol->raiz==NULL)
+        return;
+    //crear pila1
+    Pilas pila1;
+    //crear pila2
+    Pilas pila2;
+    //inicializar pila1 y pila2
+    InicializarListaDoble(&pila1);
+    InicializarListaDoble(&pila2);
+    //Push arbol->raiz a pila1
+    push(&pila1,arbol->raiz);
+    //mientras pila1 no este vacia
+    while(!estaVacia(&pila1)){
+        //temp igual a Pop de pila1
+        NodoBinario *temp=(NodoBinario *)pop(&pila1);
+        //Push temp a pila2
+        push(&pila2,temp);
+        //si temp->izq existe
+        if(temp->izq!=NULL){
+            //Push temp->izq a pila1
+            push(&pila1,temp->izq);
+        }
+        //si temp->der existe
+        if(temp->der!=NULL){
+            //Push temp->der a pila1
+            push(&pila1,temp->der);
+        }
+    }
+    //mientras pila2 no este vacia
+    while(!estaVacia(&pila2)){
+        //temp igual a Pop de pila2
+        NodoBinario *temp=(NodoBinario *)pop(&pila2);
+        //imprimir dato de temp
+        printfdatodeseado(temp->dato);
+    }
+    //liberar pila1 y pila2
+    LiberarLista(&pila1);
+    LiberarLista(&pila2);
+}
+void printBFS(const ArbolBinario *const arbol){
+    //si arbol->raiz igual a nulo
+    if(arbol->raiz==NULL)
+        return;
+    //crear su cola
+    Colas cola;
+    //inicializar la cola
+    InicializarListaDoble(&cola);
+    //Push arbol->raiz a cola
+    pushCola(&cola,arbol->raiz);
+
+    //mientras cola no este vacia
+    while(!EstaVaciaCola(&cola)){
+        //temp igual a Pop de cola
+        NodoBinario *temp=(NodoBinario *)popCola(&cola);
+        //imprimir dato de temp
+        printfdatodeseado(temp->dato);
+        //si temp->izq existe
+        if(temp->izq!=NULL){
+            //Push temp->izq a cola
+            pushCola(&cola,temp->izq);
+        }
+        //si temp->der existe
+        if(temp->der!=NULL){
+            //Push temp->der a cola
+            pushCola(&cola,temp->der);
+        }
+    }
+    //liberar cola
+    LiberarLista(&cola);
+}
