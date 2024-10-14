@@ -269,8 +269,8 @@ void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)
         return;
     }
     //si el valor de raiz dato es menor que nuevo dato
-    if(comparar((*raiz)->dato, nuevo->dato) > 0){
-        AgregarNodo(&(*raiz)->izq,nuevo,comparar);
+    if(com((*raiz)->dato, nuevo->dato) > 0){
+        AgregarNodo(&(*raiz)->izq,nuevo,com);
     //de lo contrario
     }else{
         AgregarNodo(&(*raiz)->der,nuevo,comparar);
@@ -396,6 +396,7 @@ void printBFS(const ArbolBinario *const arbol){
     //si arbol->raiz igual a nulo
     if(arbol->raiz==NULL)
         return;
+
     //crear su cola
     Colas cola;
     //inicializar la cola
