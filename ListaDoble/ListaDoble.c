@@ -255,10 +255,10 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
 
-int comparar(void *a,void *b){
-    int *int_a=(int *)a;
-    int *int_b=(int *)b;
-    return (*int_a - *int_b);
+int comparar(void* a, void* b) {
+    int valorA = *(int*)a;
+    int valorB = *(int*)b;
+    return valorA - valorB;  // Valor negativo si a < b, positivo si a > b, y 0 si son iguales
 }
 
 void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)){
@@ -270,10 +270,10 @@ void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)
     }
     //si el valor de raiz dato es menor que nuevo dato
     if(com((*raiz)->dato, nuevo->dato) > 0){
-        AgregarNodo(&(*raiz)->izq,nuevo,com);
+        AgregarNodo(&(*raiz)->izq,nuevo,comparar);
     //de lo contrario
     }else{
-        AgregarNodo(&(*raiz)->der,nuevo,comparar);
+        AgregarNodo(&(*raiz)->der,nuevo,com);
     }
 }
 
@@ -423,4 +423,18 @@ void printBFS(const ArbolBinario *const arbol){
     }
     //liberar cola
     LiberarLista(&cola);
+}
+void InOrdenDescendente(NodoBinario *nodo) {
+    if (nodo == NULL) return;
+    InOrdenDescendente(nodo->der);     // Recorrido descendente en el subárbol derecho
+    printf("%d ", *(int*)nodo->dato);  // Imprime el valor actual
+    InOrdenDescendente(nodo->izq);     // Recorrido descendente en el subárbol izquierdo
+}
+
+void LiberarArbol(NodoBinario *nodo) {
+    if (nodo == NULL) return;
+    LiberarArbol(nodo->izq);   // Liberar subárbol izquierdo
+    LiberarArbol(nodo->der);   // Liberar subárbol derecho
+    free(nodo->dato);          // Liberar dato
+    free(nodo);                // Liberar nodo
 }

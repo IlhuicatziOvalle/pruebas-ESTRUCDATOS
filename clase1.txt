@@ -11,6 +11,6 @@
 //laboratorio1 (gitdev comandos)
 //gcc -Wall -Werror -std=c99 -pedantic laboratorio1.c ListaSimple/ListaSimple.c -I/ListaSimple -o laboratorio1
 //./laboratorio1 (gitdev comandos)
-//fugas=valgrind --leak-check=full ./laboratorio5
+//fugas=valgrind --leak-check=full ./pruebas
 
-//gcc -Wall -Werror -std=c99 -pedantic laboratorio5.c ListaDoble/ListaDoble.c -I/ListaDoble -o laboratorio5
+//gcc -Wall -Werror -std=c99 -pedantic pruebas.c ListaDoble/ListaDoble.c -I/ListaDoble -o pruebas

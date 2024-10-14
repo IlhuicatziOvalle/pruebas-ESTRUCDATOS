@@ -68,3 +68,5 @@ void PreOrden(const ArbolBinario *const arbol);
 void InOrden(const ArbolBinario *const arbol);
 void PostOrden(const ArbolBinario *const arbo);
 void printBFS(const ArbolBinario *const arbol);
+void InOrdenDescendente(NodoBinario *nodo);
+void LiberarArbol(NodoBinario *nodo);
