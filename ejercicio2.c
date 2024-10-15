@@ -10,20 +10,22 @@
 
 int main() {
   ArbolBinario arbol;
-inicializarArbol(&arbol);
+  inicializarArbol(&arbol);
 
     
+    // Lista de palabras a agregar al árbol
     char *palabras[] = {"Amor", "Azul", "Casa", "Broma", "Cielo", "Dedal", "Esfera", "Florido", "Generoso", "Aguacates"};
     int n = sizeof(palabras) / sizeof(palabras[0]);
 
+    // Agregar cada palabra al árbol binario
     for (int i = 0; i < n; i++) {
-        char *palabra = malloc(strlen(palabras[i]) + 1);
-        strcpy(palabra, palabras[i]);
-        AgregarArbol(&arbol, palabra, compararPalabras);
+        AgregarArbol(&arbol, palabras[i], compararPalabras);
     }
 
+    // Imprimir el árbol en orden BFS
     printf("Árbol binario por niveles:\n");
     printBFS(&arbol);
 
-    return 0
+    
+    return 0;
 }
