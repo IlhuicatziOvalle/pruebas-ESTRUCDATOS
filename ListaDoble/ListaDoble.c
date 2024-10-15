@@ -255,10 +255,29 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
 
+void inicializarArbol(ArbolBinario *arbol) {
+    arbol->raiz = NULL;
+    arbol->altura = 0;
+    arbol->tam = 0;
+}
 int comparar(void* a, void* b) {
     int valorA = *(int*)a;
     int valorB = *(int*)b;
     return valorA - valorB;  // Valor negativo si a < b, positivo si a > b, y 0 si son iguales
+}
+int compararPalabras(void* a, void* b) {
+    char *palabraA = (char *)a;
+    char *palabraB = (char *)b;
+
+    // Si la palabraA empieza entre 'A' y 'C' o tiene menos de 6 letras, debe ir al lado izquierdo
+    if ((palabraA[0] >= 'A' && palabraA[0] <= 'C') || strlen(palabraA) < 6) {
+        if ((palabraB[0] >= 'A' && palabraB[0] <= 'C') || strlen(palabraB) < 6) {
+            return strcmp(palabraA, palabraB);
+        }
+        return -1;
+    }
+    // En otro caso, ir al lado derecho
+    return 1;
 }
 
 void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)){
@@ -409,7 +428,7 @@ void printBFS(const ArbolBinario *const arbol){
         //temp igual a Pop de cola
         NodoBinario *temp=(NodoBinario *)popCola(&cola);
         //imprimir dato de temp
-        printfdatodeseado(temp->dato);
+        imprimirPalabras(temp->dato);
         //si temp->izq existe
         if(temp->izq!=NULL){
             //Push temp->izq a cola

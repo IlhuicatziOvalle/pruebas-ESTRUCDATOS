@@ -58,7 +58,9 @@ void* PeekCola(Colas *cola);
 int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
 
+void inicializarArbol(ArbolBinario *arbol);
 int comparar(void *a,void *b);
+int compararPalabras(void* a, void* b);
 
 void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*));
 
