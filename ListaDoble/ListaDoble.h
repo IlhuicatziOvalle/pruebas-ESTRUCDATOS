@@ -63,7 +63,6 @@ int comparar(void *a,void *b);
 int compararPalabras(void* a, void* b);
 
 void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*));
-
 void AgregarArbol(ArbolBinario *arbol,void* dato,int (*com)(void*, void*));
 
 void PreOrden(const ArbolBinario *const arbol);

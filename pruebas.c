@@ -13,7 +13,7 @@ int main() {
     
     /*NUMEROS
 
-    
+
     // Inicialización del árbol
     ArbolBinario arbol;
     inicializarArbol(&arbol);
@@ -44,6 +44,7 @@ int main() {
     ArbolBinario arbol;
     inicializarArbol(&arbol);
 
+    
     char *palabras[] = {"Amor", "Azul", "Casa", "Broma", "Cielo", "Dedal", "Esfera", "Florido", "Generoso", "Aguacates"};
     int n = sizeof(palabras) / sizeof(palabras[0]);
 
