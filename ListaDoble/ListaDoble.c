@@ -60,6 +60,7 @@ void PushBack(ListaDoble *lista, void *item) {
 
 NodoDoble *GetNodo(ListaDoble *lista, void *item)
 {
+    if(lista->Head==NULL) return NULL;
     lista->Curr = lista->Head;
     while (lista->Curr->dato != item && lista->Curr != NULL)
     {
@@ -255,17 +256,11 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
 
-void inicializarArbol(ArbolBinario *arbol) {
-    ArbolBinario* arbol = (ArbolBinario*)malloc(sizeof(ArbolBinario));
-    arbol->raiz = NULL;
-    arbol->altura = 0;
-    arbol->tam = 0;
-    return arbol;
-}
-int comparar(void* a, void* b) {
-    int valorA = *(int*)a;
-    int valorB = *(int*)b;
-    return valorA - valorB;  // Valor negativo si a < b, positivo si a > b, y 0 si son iguales
+
+int compararEnteros(void *a, void *b) {
+    int val1 = *(int *)a;
+    int val2 = *(int *)b;
+    return (val1 > val2) - (val1 < val2);
 }
 int compararPalabras(void* a, void* b) {
     char *palabraA = (char *)a;
@@ -445,13 +440,7 @@ void printBFS(const ArbolBinario *const arbol){
     //liberar cola
     LiberarLista(&cola);
 }
-void LiberarArbol(NodoBinario *nodo) {
-    if (nodo == NULL) return;
-    LiberarArbol(nodo->izq);   // Liberar subárbol izquierdo
-    LiberarArbol(nodo->der);   // Liberar subárbol derecho
-    free(nodo->dato);          // Liberar dato
-    free(nodo);                // Liberar nodo
-}
+
 //////////NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
     //usar recorrido postorden para que sea
     //el peor de los casos O(N/2)

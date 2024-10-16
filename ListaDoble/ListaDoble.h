@@ -58,7 +58,8 @@ void* PeekCola(Colas *cola);
 int EstaVaciaCola(Colas *cola);
 void imprimirCola(Colas *cola, void (*func)(void *));
 
-void inicializarArbol(ArbolBinario *arbol);
+
+int compararEnteros(void *a, void *b);
 int comparar(void *a,void *b);
 int compararPalabras(void* a, void* b);
 void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*));
@@ -67,4 +68,3 @@ void PreOrden(const ArbolBinario *const arbol);
 void InOrden(const ArbolBinario *const arbol);
 void PostOrden(const ArbolBinario *const arbo);
 void printBFS(const ArbolBinario *const arbol);
-void LiberarArbol(NodoBinario *nodo);
