@@ -291,7 +291,7 @@ void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)
     }
     //si el valor de raiz dato es menor que nuevo dato
     if(com((*raiz)->dato, nuevo->dato) > 0){
-        AgregarNodo(&(*raiz)->izq,nuevo,comparar);
+        AgregarNodo(&(*raiz)->izq,nuevo,com);
     //de lo contrario
     }else{
         AgregarNodo(&(*raiz)->der,nuevo,com);
@@ -317,7 +317,7 @@ void PreOrden(const ArbolBinario *const arbol){
     if(arbol->raiz==NULL)
         return;
     //crear una pila
-    Pilas pila;
+    ListaDoble pila;
     //inicializar pila
     InicializarListaDoble(&pila);
     //Push raiz a la pila
@@ -347,7 +347,7 @@ void InOrden(const ArbolBinario *const arbol){
     if(arbol->raiz==NULL)
         return;
     //crear pila
-    Pilas pila;
+    ListaDoble pila;
     //inciializar la pila
     InicializarListaDoble(&pila);
     //nodo temp=arbol->raiz
@@ -377,9 +377,9 @@ void PostOrden(const ArbolBinario *const arbol){
     if(arbol->raiz==NULL)
         return;
     //crear pila1
-    Pilas pila1;
+    ListaDoble pila1;
     //crear pila2
-    Pilas pila2;
+    ListaDoble pila2;
     //inicializar pila1 y pila2
     InicializarListaDoble(&pila1);
     InicializarListaDoble(&pila2);
@@ -419,7 +419,7 @@ void printBFS(const ArbolBinario *const arbol){
         return;
 
     //crear su cola
-    Colas cola;
+    ListaDoble cola;
     //inicializar la cola
     InicializarListaDoble(&cola);
     //Push arbol->raiz a cola
@@ -452,7 +452,7 @@ void LiberarArbol(NodoBinario *nodo) {
     free(nodo->dato);          // Liberar dato
     free(nodo);                // Liberar nodo
 }
-NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
+//////////NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
     //usar recorrido postorden para que sea
     //el peor de los casos O(N/2)
     //1.-Crear una pila
@@ -471,8 +471,8 @@ NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)
         //5.2-si temporal->dato es igual a dato,regresar temporal
     //6.-regresar nulo(no se encontro el dato)
 
-int eleiminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
-    NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
+///////////int eleiminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
+    //////////NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
     //si no se encontro el nodo
         //regresar 0;
     /*caso 1, no tiene hijos el nodo a borrar*/
@@ -496,9 +496,9 @@ int eleiminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *))
         //regresar 1
     /*caso 3, tiene ambos hijos*/
     //buscar el nodo con valor minimo del sub arbol derecho al borrar
-    NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
+    //////NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
     //intercambiar valores 
-    (*nborrar)   ->dato=(*minimo)->dato;
+    //////(*nborrar)   ->dato=(*minimo)->dato;
     //eliminar
-    return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
-}
+    /////////////return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
+///}
