@@ -20,8 +20,8 @@ int main() {
     }
 
     // Imprimimos el árbol en InOrden
-    printf("Recorrido InOrden del árbol binario:\n");
-    InOrden(&arbol);
+    printf("Recorrido BFS del árbol binario:\n");
+    printBFS(&arbol);
 
     return 0;
 }
