@@ -443,13 +443,6 @@ void printBFS(const ArbolBinario *const arbol){
     //liberar cola
     LiberarLista(&cola);
 }
-void InOrdenDescendente(NodoBinario *nodo) {
-    if (nodo == NULL) return;
-    InOrdenDescendente(nodo->der);     // Recorrido descendente en el subárbol derecho
-    printf("%d ", *(int*)nodo->dato);  // Imprime el valor actual
-    InOrdenDescendente(nodo->izq);     // Recorrido descendente en el subárbol izquierdo
-}
-
 void LiberarArbol(NodoBinario *nodo) {
     if (nodo == NULL) return;
     LiberarArbol(nodo->izq);   // Liberar subárbol izquierdo
