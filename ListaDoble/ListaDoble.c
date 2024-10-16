@@ -256,9 +256,11 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
 }
 
 void inicializarArbol(ArbolBinario *arbol) {
+    ArbolBinario* arbol = (ArbolBinario*)malloc(sizeof(ArbolBinario));
     arbol->raiz = NULL;
     arbol->altura = 0;
     arbol->tam = 0;
+    return arbol;
 }
 int comparar(void* a, void* b) {
     int valorA = *(int*)a;
@@ -449,4 +451,54 @@ void LiberarArbol(NodoBinario *nodo) {
     LiberarArbol(nodo->der);   // Liberar subárbol derecho
     free(nodo->dato);          // Liberar dato
     free(nodo);                // Liberar nodo
+}
+NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
+    //usar recorrido postorden para que sea
+    //el peor de los casos O(N/2)
+    //1.-Crear una pila
+    //2.-Inicializar Pila
+    //3.-comparar el dato con la raiz para saber en que lado buscar
+    //  saber en que lado buscar
+    //3.1 si dato de la raiz mayor que el dato
+        //push a la pila la direccion de raiz->izq
+    //3.2 sino si dato de la raiz menor que el dato
+        //push a la pila de la direccion de raiz->der
+    //3.3de lo contrario son iguales
+        //return raiz
+    //4.-crear un NodoBinario **temporal
+    //5.-Mientras pila no este vacia
+        //5.1-usando el algoritmo de postorden buscar el nodo con valor de dato
+        //5.2-si temporal->dato es igual a dato,regresar temporal
+    //6.-regresar nulo(no se encontro el dato)
+
+int eleiminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
+    NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
+    //si no se encontro el nodo
+        //regresar 0;
+    /*caso 1, no tiene hijos el nodo a borrar*/
+    //si(*nborrar)->izq y (*nborrar)->der son nulos
+        //liberar(*nborrar)
+        //hacer nulo(*nborrar)
+        //regresar1;
+    /*caso 2, tiene hijo derecho*/
+    //si (*nborrar)->izq es nulo entonces
+        //crear aputnador NodoBianrio temporal e igualarlo a *nborrrar
+        //(*nborrar) es igual a (*nborrar)->der
+        //liberar temporal
+        //tmeporal hacer nulo
+        //regresar 1
+    /*caso 2, tiene hijo izquierdo*/
+     //sino si (*nborrar)->der es nulo entonces
+        //crear aputnador NodoBianrio temporal e igualarlo a *nborrrar
+        //(*nborrar) es igual a (*nborrar)->izq
+        //liberar temporal
+        //tmeporal hacer nulo
+        //regresar 1
+    /*caso 3, tiene ambos hijos*/
+    //buscar el nodo con valor minimo del sub arbol derecho al borrar
+    NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
+    //intercambiar valores 
+    (*nborrar)   ->dato=(*minimo)->dato;
+    //eliminar
+    return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
 }
