@@ -5,9 +5,10 @@
 #include "ListaDoble.h"
 #include <unistd.h>
 
+
 void ImprimirNumeros(void *dato)
 {
-    printf("%d\n", *(int *)dato);
+    printf("%d", *(int *)dato);
 }
 void printfdatodeseado(void *dato){
     printf("%c ", *(char *)dato);
@@ -60,7 +61,6 @@ void PushBack(ListaDoble *lista, void *item) {
 
 NodoDoble *GetNodo(ListaDoble *lista, void *item)
 {
-    if(lista->Head==NULL) return NULL;
     lista->Curr = lista->Head;
     while (lista->Curr->dato != item && lista->Curr != NULL)
     {
@@ -128,7 +128,7 @@ int BorrarPos(ListaDoble *lista, int pos) {
         lista->Tail = temp->prev;
     }
 
-    free(temp->dato);
+    //free(temp->dato);
     free(temp);
     lista->size--;
     return 0;
@@ -156,8 +156,6 @@ void LiberarLista(ListaDoble *lista) {
     lista->size = 0;
 }
 
-
-
 void push(Pilas *pila, void *dato) {
     PushBack(pila, dato);  // Usamos la función PushBack de la lista doblemente enlazada
 }
@@ -165,7 +163,7 @@ void* pop(Pilas *pila) {
     if (estaVacia(pila)) {
         return NULL;  // Si la pila está vacía
     }
-    void *dato = Peek(pila);  // Copia el dato del nodo en el tope de la pila
+    void *dato = pila->Tail->dato;  // Copia el dato del nodo en el tope de la pila
     BorrarPos(pila, pila->size - 1);  // Elimina el nodo en la posición final
     return dato;  // Regresa el dato copiado
 }
@@ -255,9 +253,7 @@ void imprimirCola(Colas *cola, void (*func)(void *)){
 
     LiberarLista(&aux);  // Liberar la cola auxiliar
 }
-
-
-int compararEnteros(void *a, void *b) {
+int comparar(void *a, void *b) {
     int val1 = *(int *)a;
     int val2 = *(int *)b;
     return (val1 > val2) - (val1 < val2);
@@ -286,7 +282,7 @@ void AgregarNodo(NodoBinario **raiz, NodoBinario *nuevo,int (*com)(void*, void*)
     }
     //si el valor de raiz dato es menor que nuevo dato
     if(com((*raiz)->dato, nuevo->dato) > 0){
-        AgregarNodo(&(*raiz)->izq,nuevo,com);
+        AgregarNodo(&(*raiz)->izq,nuevo,comparar);
     //de lo contrario
     }else{
         AgregarNodo(&(*raiz)->der,nuevo,com);
@@ -305,14 +301,15 @@ void AgregarArbol(ArbolBinario *arbol,void* dato,int (*com)(void*, void*)){
     AgregarNodo(&(arbol->raiz),nuevo,com);
     //incrementar tamaño del arbol en 1
     arbol->tam++;
+
 }
 
-void PreOrden(const ArbolBinario *const arbol){
+void PreOrden(const ArbolBinario *const arbol,void (*func)(void*)){
     //si raiz de arbol nulo
     if(arbol->raiz==NULL)
         return;
     //crear una pila
-    ListaDoble pila;
+    Pilas pila;
     //inicializar pila
     InicializarListaDoble(&pila);
     //Push raiz a la pila
@@ -322,7 +319,7 @@ void PreOrden(const ArbolBinario *const arbol){
         //pop de la pila guardar en un nodo temp
         NodoBinario *temp=(NodoBinario *)pop(&pila);
         //print dato del nodo temp
-        printfdatodeseado(temp->dato);
+        func(temp->dato);
         //si temp->derecho existe
         if(temp->der!=NULL){
             //Push temp->derecho a pila
@@ -337,12 +334,12 @@ void PreOrden(const ArbolBinario *const arbol){
     //liberar pila
     LiberarLista(&pila);
 }
-void InOrden(const ArbolBinario *const arbol){
+void InOrden(const ArbolBinario *const arbol, void (*func)(void*)){
     //si raiz del arbol es nulo
     if(arbol->raiz==NULL)
         return;
     //crear pila
-    ListaDoble pila;
+    Pilas pila;
     //inciializar la pila
     InicializarListaDoble(&pila);
     //nodo temp=arbol->raiz
@@ -358,23 +355,23 @@ void InOrden(const ArbolBinario *const arbol){
         }
         //temp es igual al pop de la pila
         temp=(NodoBinario *)pop(&pila);
-        //imprimir el dato de temp
-        printfdatodeseado(temp->dato);
-        //temp=temp->der
+        //imprimir el dato de tempn
+        func(temp->dato);
+        //temp=temp->dern
         temp=temp->der;
     }
     //liberar pil
     LiberarLista(&pila);
 
 }
-void PostOrden(const ArbolBinario *const arbol){
+void PostOrden(const ArbolBinario *const arbol,void (*func)(void*)){
     //si arbol->raiz es nulo
     if(arbol->raiz==NULL)
         return;
     //crear pila1
-    ListaDoble pila1;
+    Pilas pila1;
     //crear pila2
-    ListaDoble pila2;
+    Pilas pila2;
     //inicializar pila1 y pila2
     InicializarListaDoble(&pila1);
     InicializarListaDoble(&pila2);
@@ -402,19 +399,19 @@ void PostOrden(const ArbolBinario *const arbol){
         //temp igual a Pop de pila2
         NodoBinario *temp=(NodoBinario *)pop(&pila2);
         //imprimir dato de temp
-        printfdatodeseado(temp->dato);
+        func(temp->dato);
     }
     //liberar pila1 y pila2
     LiberarLista(&pila1);
     LiberarLista(&pila2);
 }
-void printBFS(const ArbolBinario *const arbol){
+void printBFS(const ArbolBinario *const arbol,void (*func)(void*)){
     //si arbol->raiz igual a nulo
     if(arbol->raiz==NULL)
         return;
 
     //crear su cola
-    ListaDoble cola;
+    Colas cola;
     //inicializar la cola
     InicializarListaDoble(&cola);
     //Push arbol->raiz a cola
@@ -425,7 +422,7 @@ void printBFS(const ArbolBinario *const arbol){
         //temp igual a Pop de cola
         NodoBinario *temp=(NodoBinario *)popCola(&cola);
         //imprimir dato de temp
-        imprimirPalabras(temp->dato);
+        func(temp->dato);
         //si temp->izq existe
         if(temp->izq!=NULL){
             //Push temp->izq a cola
@@ -441,7 +438,8 @@ void printBFS(const ArbolBinario *const arbol){
     LiberarLista(&cola);
 }
 
-//////////NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
+
+NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
     //usar recorrido postorden para que sea
     //el peor de los casos O(N/2)
     //1.-Crear una pila
@@ -460,8 +458,8 @@ void printBFS(const ArbolBinario *const arbol){
         //5.2-si temporal->dato es igual a dato,regresar temporal
     //6.-regresar nulo(no se encontro el dato)
 
-///////////int eleiminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
-    //////////NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
+int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
+    NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
     //si no se encontro el nodo
         //regresar 0;
     /*caso 1, no tiene hijos el nodo a borrar*/
@@ -485,9 +483,9 @@ void printBFS(const ArbolBinario *const arbol){
         //regresar 1
     /*caso 3, tiene ambos hijos*/
     //buscar el nodo con valor minimo del sub arbol derecho al borrar
-    //////NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
+    NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
     //intercambiar valores 
-    //////(*nborrar)   ->dato=(*minimo)->dato;
+    (*nborrar)->dato=(*minimo)->dato;
     //eliminar
-    /////////////return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
+    return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
 ///}

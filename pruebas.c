@@ -16,12 +16,12 @@ int main() {
 
     // Insertamos cada número en el árbol binario
     for (int i = 0; i < tam; i++) {
-        AgregarArbol(&arbol, &numeros[i], compararEnteros);
+        AgregarArbol(&arbol, &numeros[i], comparar);
     }
 
     // Imprimimos el árbol en InOrden
-    printf("Recorrido BFS del árbol binario:\n");
-    printBFS(&arbol);
+    printf("Recorrido InOrden del árbol binario:\n");
+    InOrden(&arbol,ImprimirNumeros);
 
     return 0;
 }
