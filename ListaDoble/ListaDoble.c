@@ -437,50 +437,126 @@ void printBFS(const ArbolBinario *const arbol,void (*func)(void*)){
     //liberar cola
     LiberarLista(&cola);
 }
+NodoBinario **BuscarMinimo(NodoBinario **raiz, int (*comp)(void *, void *)) {
+    // 1.- Crear una pila
+    Pila pila;
+
+    // 2.- Inicializar Pila
+    InicializarPila(&pila);
+
+    // 3.- Push a la pila la dirección de la raíz
+    Push(&pila, raiz);
+
+    // 4.- Crear un NodoBinario **temporal y asignarle la raíz
+    NodoBinario **temporal = raiz;
+
+    // 5.- Mientras el temporal tenga nodo izquierdo
+    while (*temporal && (*temporal)->izq) {
+        // 5.1.- Hacer que temporal apunte a su hijo izquierdo
+        temporal = &(*temporal)->izq;
+
+        // 5.2.- Push temporal a la pila
+        Push(&pila, temporal);
+    }
+
+    // 6.- Regresar el nodo mínimo encontrado
+    return temporal;
+}
 
 
 NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)){
     //usar recorrido postorden para que sea
     //el peor de los casos O(N/2)
     //1.-Crear una pila
+    Pilas pila;
     //2.-Inicializar Pila
+    InicializarListaDoble(&pila);
     //3.-comparar el dato con la raiz para saber en que lado buscar
+    while(raiz){
     //  saber en que lado buscar
     //3.1 si dato de la raiz mayor que el dato
+    if(comp((*raiz)->dato,dato) > 0){
         //push a la pila la direccion de raiz->izq
+        push(&pila, &(*raiz)->izq);
+        raiz = &(*raiz)->izq;
+    }
     //3.2 sino si dato de la raiz menor que el dato
+    else if(comp((*raiz)->dato, dato) < 0){
         //push a la pila de la direccion de raiz->der
+        push(&pila, &(*raiz)->der);
+        raiz=&(*raiz)->der;
+    }
     //3.3de lo contrario son iguales
+    else{
         //return raiz
+        return raiz;
+    }
+}
     //4.-crear un NodoBinario **temporal
+        Nodobinario **temporal;
+
     //5.-Mientras pila no este vacia
+    while(!estaVacia(&pila)){
         //5.1-usando el algoritmo de postorden buscar el nodo con valor de dato
+        temporal=pop(&pila);
         //5.2-si temporal->dato es igual a dato,regresar temporal
+        if (comp((*temporal)->dato, dato) == 0) {
+            return temporal;
+        }
+    }
+        
     //6.-regresar nulo(no se encontro el dato)
+    return NULL;
+}   
 
 int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
     NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
     //si no se encontro el nodo
         //regresar 0;
+    if(!borrar || !(*nborrrar)){
+        return 0;
+    }
     /*caso 1, no tiene hijos el nodo a borrar*/
     //si(*nborrar)->izq y (*nborrar)->der son nulos
+    if(!(*nborrar)->izq && !(*nborrar)->der){
         //liberar(*nborrar)
+        free(*nborrar);
         //hacer nulo(*nborrar)
+        *nborrar=NULL;
         //regresar1;
+        return 1;
+    }
+    
     /*caso 2, tiene hijo derecho*/
     //si (*nborrar)->izq es nulo entonces
+    if(!(*nborrar)->izq){
         //crear aputnador NodoBianrio temporal e igualarlo a *nborrrar
+        NodoBinario *temporal=*nborrar;
         //(*nborrar) es igual a (*nborrar)->der
+        *nborrar=(*nborrar)->der;
         //liberar temporal
+        free(temporal);
         //tmeporal hacer nulo
+        temporal=NULL;
         //regresar 1
+        return 1;
+    }
+    
     /*caso 2, tiene hijo izquierdo*/
      //sino si (*nborrar)->der es nulo entonces
+     if(!(*nborrar)->der){
         //crear aputnador NodoBianrio temporal e igualarlo a *nborrrar
+        NodoBinario *temporal=*nborrar;
         //(*nborrar) es igual a (*nborrar)->izq
+        *nborrar=(*nborrar)->izq;
         //liberar temporal
+        free(temporal);
         //tmeporal hacer nulo
+        temporal=NULL;
         //regresar 1
+        return 1;
+     }
+
     /*caso 3, tiene ambos hijos*/
     //buscar el nodo con valor minimo del sub arbol derecho al borrar
     NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
@@ -488,4 +564,4 @@ int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
     (*nborrar)->dato=(*minimo)->dato;
     //eliminar
     return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
-///}
+}

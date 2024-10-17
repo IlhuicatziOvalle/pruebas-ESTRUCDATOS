@@ -68,3 +68,7 @@ void PreOrden(const ArbolBinario *const arbol,void (*func)(void*));
 void InOrden(const ArbolBinario *const arbol, void (*func)(void*));
 void PostOrden(const ArbolBinario *const arbo,void (*func)(void*));
 void printBFS(const ArbolBinario *const arbol,void (*func)(void*));
+
+NodoBinario **BuscarMinimo(NodoBinario **raiz, int (*comp)(void *, void *));
+NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*));
+int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *));
