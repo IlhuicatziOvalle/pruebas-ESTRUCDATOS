@@ -5,23 +5,23 @@
 #include "ListaDoble/ListaDoble.h"  // Asegúrate de que este archivo incluya las declaraciones necesarias
 
 int main() {
-    // Lista de números generados aleatoriamente
-    int numeros[] = {42, 61, -71, 71, -80, 16, -54, 97, 40, 81, -53, 14, 79, -49, 56, 45, 87, -65, -80, 82};
-    int tam = sizeof(numeros) / sizeof(numeros[0]);
-
-    // Inicializamos el árbol binario
     ArbolBinario arbol;
     arbol.raiz = NULL;
     arbol.tam = 0;
+    
+    // Lista de palabras a agregar al árbol
+    char *palabras[] = {"Amor", "Azul", "Casa", "Broma", "Cielo", "Dedal", "Esfera", "Florido", "Generoso", "Aguacates"};
+    int n = sizeof(palabras) / sizeof(palabras[0]);
 
-    // Insertamos cada número en el árbol binario
-    for (int i = 0; i < tam; i++) {
-        AgregarArbol(&arbol, &numeros[i], comparar);
+    // Agregar cada palabra al árbol binario
+    for (int i = 0; i < n; i++) {
+        AgregarArbol(&arbol, palabras[i], compararPalabras);
     }
 
-    // Imprimimos el árbol en InOrden
-    printf("Recorrido InOrden del árbol binario:\n");
-    InOrden(&arbol,ImprimirNumeros);
+    // Imprimir el árbol en orden BFS
+    printf("Árbol binario por niveles:\n");
+    printBFS(&arbol,imprimirPalabras);
 
+    
     return 0;
 }

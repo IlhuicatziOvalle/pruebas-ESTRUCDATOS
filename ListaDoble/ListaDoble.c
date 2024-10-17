@@ -439,13 +439,13 @@ void printBFS(const ArbolBinario *const arbol,void (*func)(void*)){
 }
 NodoBinario **BuscarMinimo(NodoBinario **raiz, int (*comp)(void *, void *)) {
     // 1.- Crear una pila
-    Pila pila;
+    Pilas pila;
 
     // 2.- Inicializar Pila
-    InicializarPila(&pila);
+    InicializarListaDoble(&pila);
 
     // 3.- Push a la pila la dirección de la raíz
-    Push(&pila, raiz);
+    push(&pila, raiz);
 
     // 4.- Crear un NodoBinario **temporal y asignarle la raíz
     NodoBinario **temporal = raiz;
@@ -456,7 +456,7 @@ NodoBinario **BuscarMinimo(NodoBinario **raiz, int (*comp)(void *, void *)) {
         temporal = &(*temporal)->izq;
 
         // 5.2.- Push temporal a la pila
-        Push(&pila, temporal);
+        push(&pila, temporal);
     }
 
     // 6.- Regresar el nodo mínimo encontrado
@@ -493,7 +493,7 @@ NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*)
     }
 }
     //4.-crear un NodoBinario **temporal
-        Nodobinario **temporal;
+        NodoBinario **temporal;
 
     //5.-Mientras pila no este vacia
     while(!estaVacia(&pila)){
@@ -513,7 +513,7 @@ int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
     NodoBinario **nborrar=BuscarNodo(raiz,dato,comparar);
     //si no se encontro el nodo
         //regresar 0;
-    if(!borrar || !(*nborrrar)){
+    if(!nborrar || !(*nborrar)){
         return 0;
     }
     /*caso 1, no tiene hijos el nodo a borrar*/
@@ -559,9 +559,9 @@ int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
 
     /*caso 3, tiene ambos hijos*/
     //buscar el nodo con valor minimo del sub arbol derecho al borrar
-    NodoBinario **minimo=BuscarMinimo((*nborrar)->der, comaprar);
+    NodoBinario **minimo=BuscarMinimo(&(*nborrar)->der, comparar);
     //intercambiar valores 
     (*nborrar)->dato=(*minimo)->dato;
     //eliminar
-    return eleiminarNodo(&(*nborrar)->der,(*minimo)->dato,comprar); 
+    return eliminarNodo(&(*nborrar)->der,(*minimo)->dato,comparar); 
 }
