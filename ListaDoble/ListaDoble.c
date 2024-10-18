@@ -8,13 +8,13 @@
 
 void ImprimirNumeros(void *dato)
 {
-    printf("%d", *(int *)dato);
+    printf("%d ", *(int *)dato);
 }
 void printfdatodeseado(void *dato){
     printf("%c ", *(char *)dato);
 }
 void imprimirPalabras(void *dato) {
-    printf("%s\n", (char *)dato);
+    printf("%s ", (char *)dato);
 }
 
 void InicializarListaDoble(ListaDoble *lista) {
@@ -564,4 +564,34 @@ int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *)){
     (*nborrar)->dato=(*minimo)->dato;
     //eliminar
     return eliminarNodo(&(*nborrar)->der,(*minimo)->dato,comparar); 
+}
+void InOrdenDescendente(const ArbolBinario *const arbol, void (*func)(void*)){
+    //si raiz del arbol es nulo
+    if(arbol->raiz==NULL)
+        return;
+    //crear pila
+    Pilas pila;
+    //inciializar la pila
+    InicializarListaDoble(&pila);
+    //nodo temp=arbol->raiz
+    NodoBinario *temp=arbol->raiz;
+    //mientras temp diferente de nulo 0 la pila no esta vacia
+    while(temp!=NULL || !estaVacia(&pila)){
+        //mientras temp diferente a nulo
+        while(temp!=NULL){
+            //Push a la pila temp
+            push(&pila,temp);
+            //temp=temp->izq
+            temp=temp->der;
+        }
+        //temp es igual al pop de la pila
+        temp=(NodoBinario *)pop(&pila);
+        //imprimir el dato de tempn
+        func(temp->dato);
+        //temp=temp->dern
+        temp=temp->izq;
+    }
+    //liberar pil
+    LiberarLista(&pila);
+
 }
