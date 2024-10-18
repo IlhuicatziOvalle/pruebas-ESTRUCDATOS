@@ -5,8 +5,9 @@
 #include "ListaDoble/ListaDoble.h"  // Asegúrate de que este archivo incluya las declaraciones necesarias
 
 
+
 int main() {
-     ArbolBinario arbol;
+    ArbolBinario arbol;
     arbol.raiz = NULL;
     arbol.tam = 0;
 
@@ -18,14 +19,18 @@ int main() {
     }
 
     printf("Árbol binario impreso por nivel:\n");
-    printBFS(&arbol,imprimirPalabras);
+    printBFS(&arbol, imprimirPalabras);
 
-    // Eliminar un nodo (por ejemplo, "Azul")
-    eliminarNodo(&(arbol.raiz), "Azul", compararPalabras);
+    // Solicitar al usuario que ingrese la palabra que desea eliminar
+    char palabraEliminar[30];
+    printf("\n Ingrese la palabra a eliminar: ");
+    scanf("%s", palabraEliminar);
 
-    printf("\nÁrbol después de eliminar 'Azul':\n");
-    printBFS(&arbol,imprimirPalabras);
+    // Eliminar el nodo con la palabra ingresada
+    eliminarNodo(&(arbol.raiz), palabraEliminar, compararPalabras);
+
+    printf("\nÁrbol después de eliminar '%s':\n", palabraEliminar);
+    printBFS(&arbol, imprimirPalabras);
 
     return 0;
 }
-

@@ -6,7 +6,7 @@
 
 int main() {
     // Inicialización del árbol
-     ArbolBinario arbol;
+    ArbolBinario arbol;
     arbol.raiz = NULL;
     arbol.tam = 0;
     
@@ -23,12 +23,13 @@ int main() {
 
     // Imprimir en orden descendente
     printf("Elementos en orden descendente:\n");
-    InOrdenDescendente(&arbol,ImprimirNumeros);
+    InOrdenDescendente(&arbol, ImprimirNumeros);
     printf("\n");
 
-    // Elegir un número a eliminar
-    int eliminar = 71;  // Puedes cambiar este valor para probar con otros números
-    printf("Eliminando el número %d...\n", eliminar);
+    // Elegir un número a eliminar desde la entrada del usuario
+    int eliminar;
+    printf("Introduce el número a eliminar: ");
+    scanf("%d", &eliminar);
 
     // Llamar a la función eliminarNodo
     if (eliminarNodo(&arbol.raiz, &eliminar, comparar)) {
@@ -39,10 +40,9 @@ int main() {
 
     // Imprimir en orden descendente después de eliminar el nodo
     printf("Elementos en orden descendente tras la eliminación:\n");
-    InOrdenDescendente(&arbol,ImprimirNumeros);
+    InOrdenDescendente(&arbol, ImprimirNumeros);
     printf("\n");
 
-
-
+    
     return 0;
 }
