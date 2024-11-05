@@ -595,3 +595,196 @@ void InOrdenDescendente(const ArbolBinario *const arbol, void (*func)(void*)){
     LiberarLista(&pila);
 
 }
+void bubblingUP(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
+{
+    //pq es la cola con prioridad
+    //k es el indice del nodo en el arreglo 
+    //min es 1 si es MinHeap o -1 si es MaxHeap
+    //comparar una funcion que debe regresar 1 si es menor o igual el primer
+    //parametro o -1 si es mayor
+
+    //inversa 2k+1->(k-1)/2
+    int indexPadre = (k - 1) / 2;
+    //mientras elemento sea mayor a 0 &&
+    //comparar (heap[k] con heap [index_padre]) sea igual a min
+    while (k > 0 && comparar(pq->heap[k].valor, pq->heap[indexPadre].valor) == min)
+    {
+        swapdatovalue(&pq->heap[indexPadre], &pq->heap[k]);
+        k = indexPadre;
+        indexPadre = (k - 1) / 2;
+    }
+}
+void bubblingDown(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
+{
+    //pq es la cola con prioridad
+    //k es el indice del nodo en el arreglo 
+    //min es 1 si es MinHeap o -1 si es MaxHeap
+    //comparar una funcion que debe regresar 1 si es menor o igual el primer
+    //parametro o -1 si es mayor
+    
+    //Mientras 1
+    while(1)
+    {   
+        //obtener indice del hijo izquierdo con
+        int izq= 2*k+1;
+        //obtener el indice del hijo derecho con
+        int der= 2*k+2; //int der= 2*k+1;
+        //asumir que el izq es el mas chico
+        int chico=izq;
+        
+        //el derecho es mas chico
+        if(der<pq->heap_size && comparar(pq->heap[der].valor, pq->heap[izq].valor)==min)
+        {
+        chico=der;
+        }
+
+        //si terminamos los elementos entonces salir
+        if(izq>= pq->heap_size && comparar(pq->heap[k].valor,pq->heap[chico].valor)==min)
+        {
+            break;
+        }
+        //intercambiar los valores de los nodos
+        swapdatovalue(&pq->heap[chico],&pq->heap[k]);
+        k=chico;
+    }
+}
+void insercionHeap(PQueue *pq, void *dato, int min,int (*comparar)(void *, void *))
+{
+    //pq es la cola con prioridad
+    //dato es el dato a ingresar a la cola
+    //min es 1 si es MinHeap o -1 si es MaxHeap
+    //comparar una funcion que debe regresar 1 si es menor o igual el primer
+    //parametro o -1 si es mayor
+
+    //Si pq->heap_size menor que pq->heap_capacidad entonces
+    if(pq->heap_size < pq->heap_capacidad)
+    {
+        pq->heap[pq->heap_size].valor = dato;
+    }
+    else
+    {   //incrementar capacidad       
+        pq->heap_capacidad*=2;
+        //agrandar el arreglo heap con realloc en capacidad
+        pq->heap=realloc(pq->heap,pq->heap_capacidad * sizeof(PQueue));
+    }
+    bubblingUp(pq,pq->heap_size,min,comparar);
+    pq->heap_size++;
+}
+
+
+void *pq_pop(PQueue *pq, int min, int (*comparar)(void *, void *))
+{
+    //pq es la cola con prioridad
+    //min es 1 si es MinHeap o -1 si es MaxHeap
+    //comparar una funcion que debe regresar 1 si es menor o igual el primer 
+    //parametro o -1 si es mayor
+    void *salir=pq->heap[0].valor;
+    swapDatoValue(&pq->heap[0], &pq->heap[pq->heap_size-1]);
+    //borrar, en caso de hacer malloc usar free
+    pq->heap[pq->heap_size-1].valor=0;
+    pq->heap_size--;
+    bubblingDown(pq,0,min,comparar);
+    return salir;
+}
+void swapDatoValue(Dato *a, Dato *b)
+{
+    Dato temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void initPQueue(PQueue *pq, int tam) {
+    pq->heap = (Dato *)calloc(tam, sizeof(Dato));
+    pq->heapsize = 0;
+    pq->heapcapacidad = tam;
+}
+
+
+
+
+void pushPQueue(PQueue *queue, void *data, int (*compar)(void *, void *)) {
+    if (queue->heapsize >= queue->heapcapacidad) {
+        // La cola está llena
+        return;
+    }
+
+
+    int pos = queue->heapsize;
+    queue->heap[pos].valor = data;
+
+
+    while (pos > 0) {
+        int padre = (pos - 1) / 2;
+        if (compar(queue->heap[pos].valor, queue->heap[padre].valor) < 0) {
+            // Si el hijo es menor que el padre, intercambiarlos
+            Dato temp = queue->heap[pos];
+            queue->heap[pos] = queue->heap[padre];
+            queue->heap[padre] = temp;
+            pos = padre;
+        } else {
+            break;
+        }
+    }
+
+
+    queue->heapsize++;
+}
+
+
+void *popPQueue(PQueue *pq, int (*compar)(void *, void *)) {
+    if (pq->heapsize <= 0) {
+        // La cola está vacía
+        return NULL;
+    }
+
+
+    void *valor = pq->heap[0].valor;
+    pq->heapsize--;
+
+
+    // Mover el último elemento a la raíz
+    pq->heap[0] = pq->heap[pq->heapsize];
+    int pos = 0;
+
+
+    while (pos < pq->heapsize) {
+        int izquierda = 2 * pos + 1;
+        int derecha = 2 * pos + 2;
+        int min = pos;
+
+
+        if (izquierda < pq->heapsize && compar(pq->heap[izquierda].valor, pq->heap[min].valor) < 0) {
+            min = izquierda;
+        }
+        if (derecha < pq->heapsize && compar(pq->heap[derecha].valor, pq->heap[min].valor) < 0) {
+            min = derecha;
+        }
+
+
+        if (min != pos) {
+            // Si el hijo es menor que el padre, intercambiarlos
+            Dato temp = pq->heap[pos];
+            pq->heap[pos] = pq->heap[min];
+            pq->heap[min] = temp;
+            pos = min;
+        } else {
+            break;
+        }
+    }
+
+
+    return valor;
+}
+void liberarPQueue(PQueue *queue) {
+    if (queue == NULL) {
+        return;
+    }
+
+
+    for (int i = 0; i < queue->heapsize; i++) {
+        free(queue->heap[i].valor);
+    }
+
+
+    free(queue->heap);
+    free(queue);
+}

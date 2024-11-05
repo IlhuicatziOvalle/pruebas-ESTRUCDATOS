@@ -25,6 +25,28 @@ typedef struct _ArbolBinario{
     int tam;
 }ArbolBinario;
 
+typedef struct _DATO{
+    void *valor;
+}Dato;
+
+typedef struct _PQueue{
+    int heap_size;
+    int heap_capacidad;
+    Dato *heap;
+}PQueue;
+
+typedef struct _Lesion{
+    int severidad;
+    char descripcion[100];
+}Lesion;
+
+typedef struct _Paciente{
+    char nombre[50];
+    int edad;
+    Lesion *informacion;    
+}Paciente;
+
+
 
 void ImprimirNumeros(void *dato);
 void printfdatodeseado(void *dato);
@@ -73,3 +95,14 @@ NodoBinario **BuscarMinimo(NodoBinario **raiz, int (*comp)(void *, void *));
 NodoBinario **BuscarNodo(NodoBinario **raiz,void* dato, int (*comp)(void*,void*));
 int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *));
 void InOrdenDescendente(const ArbolBinario *const arbol, void (*func)(void*));
+
+
+void bubblingUP(PQueue *pq, int k, int min, int (*comparar)(void *, void *));
+void bubblingDown(PQueue *pq, int k, int min, int (*comparar)(void *, void *));
+void insercionHeap(PQueue *pq, void *dato, int min,int (*comparar)(void *, void *));
+void *pq_pop(PQueue *pq, int min, int (*comparar)(void *, void *));
+void swapDatoValue(Dato *a, Dato *b);
+void initPQueue(PQueue *pq, int tam);
+void pushPQueue(PQueue *queue, void *data, int (*compar)(void *, void *));
+void *popPQueue(PQueue *pq, int (*compar)(void *, void *));
+void liberarPQueue(PQueue *queue);
