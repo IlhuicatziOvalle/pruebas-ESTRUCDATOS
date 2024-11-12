@@ -595,7 +595,13 @@ void InOrdenDescendente(const ArbolBinario *const arbol, void (*func)(void*)){
     LiberarLista(&pila);
 
 }
-void bubblingUP(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
+void swapDatoValue(Dato *a, Dato *b)
+{
+    Dato temp = *a;
+    *a = *b;
+    *b = temp;
+}
+void bubblingUp(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
 {
     //pq es la cola con prioridad
     //k es el indice del nodo en el arreglo 
@@ -609,7 +615,7 @@ void bubblingUP(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
     //comparar (heap[k] con heap [index_padre]) sea igual a min
     while (k > 0 && comparar(pq->heap[k].valor, pq->heap[indexPadre].valor) == min)
     {
-        swapdatovalue(&pq->heap[indexPadre], &pq->heap[k]);
+        swapDatoValue(&pq->heap[indexPadre], &pq->heap[k]);
         k = indexPadre;
         indexPadre = (k - 1) / 2;
     }
@@ -639,12 +645,12 @@ void bubblingDown(PQueue *pq, int k, int min, int (*comparar)(void *, void *))
         }
 
         //si terminamos los elementos entonces salir
-        if(izq>= pq->heap_size && comparar(pq->heap[k].valor,pq->heap[chico].valor)==min)
+        if(izq>= pq->heap_size || comparar(pq->heap[k].valor,pq->heap[chico].valor)==min)
         {
             break;
         }
         //intercambiar los valores de los nodos
-        swapdatovalue(&pq->heap[chico],&pq->heap[k]);
+        swapDatoValue(&pq->heap[chico],&pq->heap[k]);
         k=chico;
     }
 }
@@ -666,6 +672,7 @@ void insercionHeap(PQueue *pq, void *dato, int min,int (*comparar)(void *, void 
         pq->heap_capacidad*=2;
         //agrandar el arreglo heap con realloc en capacidad
         pq->heap=realloc(pq->heap,pq->heap_capacidad * sizeof(PQueue));
+        pq->heap[pq->heap_size].valor=dato;
     }
     bubblingUp(pq,pq->heap_size,min,comparar);
     pq->heap_size++;
@@ -686,105 +693,155 @@ void *pq_pop(PQueue *pq, int min, int (*comparar)(void *, void *))
     bubblingDown(pq,0,min,comparar);
     return salir;
 }
-void swapDatoValue(Dato *a, Dato *b)
-{
-    Dato temp = *a;
-    *a = *b;
-    *b = temp;
-}
 void initPQueue(PQueue *pq, int tam) {
     pq->heap = (Dato *)calloc(tam, sizeof(Dato));
-    pq->heapsize = 0;
-    pq->heapcapacidad = tam;
+    pq->heap_size = 0;
+    pq->heap_capacidad = tam;
+}
+void *remover(PQueue *pq, int (*comparar)(void *, void *)) {
+    if (pq->heap_size <= 0) {
+        return NULL; // El montículo está vacío
+    }
+
+    // El elemento raíz a remover
+    void *datoRemovido = pq->heap[0].valor;
+
+    // Reemplaza la raíz con el último elemento
+    pq->heap[0].valor = pq->heap[pq->heap_size - 1].valor;
+    pq->heap_size--; // Reduce el tamaño del heap
+
+    // Realiza bubbling down para restaurar la propiedad del heap
+    bubblingDown(pq, 0, 0, comparar);
+
+    return datoRemovido;
 }
 
+int compararSeveridad(void *a, void *b) {
+    if (!a || !b) return 0;  // Verificar punteros válidos
 
+    Paciente *p1 = (Paciente *)a;
+    Paciente *p2 = (Paciente *)b;
 
-
-void pushPQueue(PQueue *queue, void *data, int (*compar)(void *, void *)) {
-    if (queue->heapsize >= queue->heapcapacidad) {
-        // La cola está llena
-        return;
+    // Comparar las severidades
+    if (p1->informacion->severidad < p2->informacion->severidad) {
+        return 1;  // p1 es menor
+    } else if (p1->informacion->severidad > p2->informacion->severidad) {
+        return -1; // p1 es mayor
+    } else {
+        return 0;  // son iguales
     }
-
-
-    int pos = queue->heapsize;
-    queue->heap[pos].valor = data;
-
-
-    while (pos > 0) {
-        int padre = (pos - 1) / 2;
-        if (compar(queue->heap[pos].valor, queue->heap[padre].valor) < 0) {
-            // Si el hijo es menor que el padre, intercambiarlos
-            Dato temp = queue->heap[pos];
-            queue->heap[pos] = queue->heap[padre];
-            queue->heap[padre] = temp;
-            pos = padre;
-        } else {
-            break;
-        }
-    }
-
-
-    queue->heapsize++;
 }
 
+int JerarquiaOperadores(char a, char b)
+{
+    if ((a == '+' || a == '-') && ((b == '+' || b == '-')))
+        return 0;
+    else if ((a == '+' || a == '-') && ((b == '*' || b == '/' || b == '^')))
+        return -1;
+    else if ((a == '*' || a == '/') && ((b == '+' || b == '-')))
+        return 1;
+    else if ((a == '*' || a == '/') && ((b == '*' || b == '/')))
+        return 0;
+    else if ((a == '^') && ((b == '*' || b == '/' || b == '^' || b == '+' || b == '-')))
+        return 1;
+    else if ((a == '*' || a == '/' || a == '^' || a == '+' || a == '-') && ((b == '^')))
+        return -1;
+    else if ((a == '^') && ((b == '^')))
+        return 0;
 
-void *popPQueue(PQueue *pq, int (*compar)(void *, void *)) {
-    if (pq->heapsize <= 0) {
-        // La cola está vacía
-        return NULL;
-    }
-
-
-    void *valor = pq->heap[0].valor;
-    pq->heapsize--;
-
-
-    // Mover el último elemento a la raíz
-    pq->heap[0] = pq->heap[pq->heapsize];
-    int pos = 0;
-
-
-    while (pos < pq->heapsize) {
-        int izquierda = 2 * pos + 1;
-        int derecha = 2 * pos + 2;
-        int min = pos;
-
-
-        if (izquierda < pq->heapsize && compar(pq->heap[izquierda].valor, pq->heap[min].valor) < 0) {
-            min = izquierda;
-        }
-        if (derecha < pq->heapsize && compar(pq->heap[derecha].valor, pq->heap[min].valor) < 0) {
-            min = derecha;
-        }
-
-
-        if (min != pos) {
-            // Si el hijo es menor que el padre, intercambiarlos
-            Dato temp = pq->heap[pos];
-            pq->heap[pos] = pq->heap[min];
-            pq->heap[min] = temp;
-            pos = min;
-        } else {
-            break;
-        }
-    }
-
-
-    return valor;
+    return 1;
 }
-void liberarPQueue(PQueue *queue) {
-    if (queue == NULL) {
-        return;
+
+int EsOperador(char a)
+{
+    return a == '+' || a == '-' || a == '*' || a == '/' || a == '^';
+}
+
+char *PostInfixPtr(char *expresion)
+{
+    int tam = strlen(expresion);
+    char *copia = (char *)malloc(sizeof(char) * tam);
+    // strcpy(copia, expresion);
+
+    Pilas pila;
+    InicializarListaDoble(&pila);
+
+    int c = 0;
+    for (int i = 0; i < tam; i++)
+    {
+        // si es operando
+        if (!EsOperador(expresion[i]) && expresion[i] != '(' && expresion[i] != ')')
+        {
+            copia[c] = expresion[i];
+            c++;
+        }
+        // si es parentesis abierto
+        else if (expresion[i] == '(')
+        {
+            push(&pila, &expresion[i]);
+        }
+        // parentesis cerrado
+        else if (expresion[i] == ')')
+        {
+            while (!estaVacia(&pila) && *(char *)Peek(&pila) != '(')
+            {
+                copia[c] = *(char *)pop(&pila);
+                c++;
+            }
+            // sacar a (
+            pop(&pila);
+        }
+        else // operadores
+        {
+            while (!estaVacia(&pila) && JerarquiaOperadores(expresion[i], *(char *)Peek(&pila)) <= 0)
+            {
+                copia[c] = *(char *)pop(&pila);
+                c++;
+            }
+            push(&pila, &expresion[i]);
+        }
     }
 
-
-    for (int i = 0; i < queue->heapsize; i++) {
-        free(queue->heap[i].valor);
+    while (!estaVacia(&pila))
+    {
+        copia[c] = *(char *)pop(&pila);
+        c++;
     }
 
+    return copia;
+}
 
-    free(queue->heap);
-    free(queue);
+void AgregarNodoExpr(NodoExpr **arbol, char *postinfix)
+{
+    Pilas pila;
+    InicializarListaDoble(&pila);
+
+    int tam = strlen(postinfix);
+
+    for (int i = 0; i < tam; i++) {
+        if (postinfix[i] == ' ') {
+            continue;  // Saltar espacios en blanco
+        }
+        if (!EsOperador(postinfix[i])) { // Si es operando
+            // Crear nodo para el operando
+            NodoExpr *operando = (NodoExpr *)malloc(sizeof(NodoExpr));
+            operando->dato = malloc(sizeof(char));  // Asignar espacio para el dato
+            *(char *)(operando->dato) = postinfix[i];  // Copiar el operando
+            operando->der = NULL;
+            operando->izq = NULL;
+            push(&pila, operando);  // Apilar el operando
+        } else {  // Si es operador
+            NodoExpr *operador = (NodoExpr *)malloc(sizeof(NodoExpr));
+            operador->dato = malloc(sizeof(char));  // Asignar espacio para el dato
+            *(char *)(operador->dato) = postinfix[i];  // Copiar el operador
+
+            // Sacar los dos operandos de la pila
+            operador->der = (NodoExpr *)pop(&pila);
+            operador->izq = (NodoExpr *)pop(&pila);
+
+            // Apilar el operador (nuevo subárbol)
+            push(&pila, operador);
+        }
+    }
+    *arbol = (NodoExpr *)pop(&pila);  // El último elemento en la pila es la raíz del árbol
 }

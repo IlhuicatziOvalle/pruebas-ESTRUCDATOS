@@ -42,7 +42,6 @@ typedef struct _Lesion{
 
 typedef struct _Paciente{
     char nombre[50];
-    int edad;
     Lesion *informacion;    
 }Paciente;
 
@@ -97,12 +96,17 @@ int eliminarNodo(NodoBinario **raiz,void * dato, int(*comparar)(void *,void *));
 void InOrdenDescendente(const ArbolBinario *const arbol, void (*func)(void*));
 
 
-void bubblingUP(PQueue *pq, int k, int min, int (*comparar)(void *, void *));
+void swapDatoValue(Dato *a, Dato *b);
+void bubblingUp(PQueue *pq, int k, int min, int (*comparar)(void *, void *));
 void bubblingDown(PQueue *pq, int k, int min, int (*comparar)(void *, void *));
 void insercionHeap(PQueue *pq, void *dato, int min,int (*comparar)(void *, void *));
 void *pq_pop(PQueue *pq, int min, int (*comparar)(void *, void *));
-void swapDatoValue(Dato *a, Dato *b);
 void initPQueue(PQueue *pq, int tam);
-void pushPQueue(PQueue *queue, void *data, int (*compar)(void *, void *));
-void *popPQueue(PQueue *pq, int (*compar)(void *, void *));
-void liberarPQueue(PQueue *queue);
+void *remover(PQueue *pq, int (*comparar)(void *, void *));
+int compararSeveridad(void *a, void *b);
+
+typedef NodoBinario NodoExpr;
+int JerarquiaOperadores(char a, char b);
+int EsOperador(char a);
+char *PostInfixPtr(char *expresion);
+void AgregarNodoExpr(NodoExpr **arbol, char *postinfix);
