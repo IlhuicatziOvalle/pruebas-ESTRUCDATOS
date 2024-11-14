@@ -716,21 +716,7 @@ void *remover(PQueue *pq, int (*comparar)(void *, void *)) {
     return datoRemovido;
 }
 
-int compararSeveridad(void *a, void *b) {
-    if (!a || !b) return 0;  // Verificar punteros válidos
 
-    Paciente *p1 = (Paciente *)a;
-    Paciente *p2 = (Paciente *)b;
-
-    // Comparar las severidades
-    if (p1->informacion->severidad < p2->informacion->severidad) {
-        return 1;  // p1 es menor
-    } else if (p1->informacion->severidad > p2->informacion->severidad) {
-        return -1; // p1 es mayor
-    } else {
-        return 0;  // son iguales
-    }
-}
 
 int JerarquiaOperadores(char a, char b)
 {
@@ -854,17 +840,17 @@ Tupla *Get(TablaHash *tabla, void *llave, size_t size)
     ListaDoble *slot = &tabla->slots[indice];
 
     // Verificar si la lista está vacía en el índice calculado
-    if (slot->head == NULL)
+    if (slot->Head == NULL)
     {
         // printf("Error: No se encontró la llave\n");
         return NULL;
     }
 
     // Recorrer la lista en el índice calculado para encontrar la llave
-    NodoDoble *temp = slot->head;
+    NodoDoble *temp = slot->Head;
     while (temp != NULL)
     {
-        Tupla *dato = (Tupla *)temp->data;
+        Tupla *dato = (Tupla *)temp->dato;
         if (memcmp(dato->llave, llave, size) == 0)
         {
             return dato;
@@ -881,12 +867,12 @@ Tupla *Get(TablaHash *tabla, void *llave, size_t size)
             if (i >= tabla->capacidad)
                 i = 0;
             slot = &tabla->slots[i];
-            if (slot->head != NULL)
+            if (slot->Head != NULL)
             {
-                NodoDoble *temp = slot->head;
+                NodoDoble *temp = slot->Head;
                 while (temp != NULL)
                 {
-                    Tupla *dato = (Tupla *)temp->data;
+                    Tupla *dato = (Tupla *)temp->dato;
                     if (memcmp(dato->llave, llave, size) == 0)
                     {
                         return dato;
@@ -904,12 +890,12 @@ Tupla *Get(TablaHash *tabla, void *llave, size_t size)
         {
             int newIndex = quadratic_probing(indice, i);
             slot = &tabla->slots[newIndex];
-            if (slot->head != NULL)
+            if (slot->Head != NULL)
             {
-                NodoDoble *temp = slot->head;
+                NodoDoble *temp = slot->Head;
                 while (temp != NULL)
                 {
-                    Tupla *dato = (Tupla *)temp->data;
+                    Tupla *dato = (Tupla *)temp->dato;
                     if (memcmp(dato->llave, llave, size) == 0)
                     {
                         return dato;
@@ -927,12 +913,12 @@ Tupla *Get(TablaHash *tabla, void *llave, size_t size)
         {
             int newIndex = heuristica_double_hash(tabla->hash1(llave), tabla->hash2(llave), i);
             slot = &tabla->slots[newIndex];
-            if (slot->head != NULL)
+            if (slot->Head != NULL)
             {
-                NodoDoble *temp = slot->head;
+                NodoDoble *temp = slot->Head;
                 while (temp != NULL)
                 {
-                    Tupla *dato = (Tupla *)temp->data;
+                    Tupla *dato = (Tupla *)temp->dato;
                     if (memcmp(dato->llave, llave, size) == 0)
                     {
                         return dato;
@@ -956,14 +942,14 @@ void initTableHash(TablaHash *tabla, int capacidad,FuncionHash hash1,FuncionHash
     strcpy(tabla->tipo_colision, colision);
     tabla->slots = (ListaDoble *)malloc(capacidad * sizeof(ListaDoble));
     for (int i = 0; i < capacidad; i++) {
-        IniciarListaDoble(&tabla->slots[i]);
+        InicializarListaDoble(&tabla->slots[i]);
     }
 }
 
 
 void Put(TablaHash *tabla,Tupla *dato){
     int indice = tabla->hash1(dato->llave) % tabla->capacidad;
-    AddTail(&tabla->slots[indice], dato);
+    PushBack(&tabla->slots[indice], dato);
     tabla->size++;
 }
 

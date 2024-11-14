@@ -35,16 +35,19 @@ typedef struct _PQueue{
     Dato *heap;
 }PQueue;
 
-typedef struct _Lesion{
-    int severidad;
-    char descripcion[100];
-}Lesion;
-
-typedef struct _Paciente{
-    char nombre[50];
-    Lesion *informacion;    
-}Paciente;
-
+typedef int (*FuncionHash)(void *llave);
+typedef struct _Tupla{
+    void *llave;
+    void *dato;
+}Tupla;
+typedef struct _TablaHash{
+    FuncionHash hash1;
+    FuncionHash hash2;
+    ListaDoble *slots;
+    int size;
+    int capacidad;
+    char tipo_colision[15];
+}TablaHash;
 
 
 void ImprimirNumeros(void *dato);

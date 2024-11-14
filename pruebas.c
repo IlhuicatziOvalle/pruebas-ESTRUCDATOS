@@ -23,13 +23,28 @@ void printTabla(TablaHash tabla){
     for(int i=0;i<tabla.capacidad;i++){
         ListaDoble l=tabla.slots[i];
         printf("[%d]",i);
-        ImprimirLista(l,printTupla);
+        ImprimirLista(&l,printTupla);
         printf("\n");
     }
 }
 int main(void)
 {
+    int opcion,opcion2;
+
+    do{
+        printf("Menu");
+        printf("1. Registrar paquete\n");
+        printf("2. Buscar paquete\n");
+        printf("3. Salir\n");
+        printf("Selecciona una opcion: ");
+        scanf("%d", &opcion);
     
+    switch(&opcion){
+        case1: {
+
+        }
+    }
+    }    
 
     return 0;
 }
