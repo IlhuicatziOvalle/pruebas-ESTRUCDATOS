@@ -89,10 +89,10 @@ int main(void)
                     break;
                 }
                 case 2: {
-                    float largo, ancho, alto;
-                    printf("Ingrese dimensiones (Largo Ancho Alto): ");
-                    scanf("%f %f %f", &largo, &ancho, &alto);
-                    buscar_por_dimensiones(&tabla, largo, ancho, alto);
+                    float ancho, alto, profundidad;
+                    printf("Ingrese dimensiones (Ancho Alto Profundidad): ");
+                    scanf("%f %f %f", &ancho, &alto, &profundidad);
+                    buscar_por_dimensiones(&tabla, ancho, alto, profundidad);
                     break;
                 }
                 case 3: {
