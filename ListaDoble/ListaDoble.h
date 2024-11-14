@@ -110,3 +110,14 @@ int JerarquiaOperadores(char a, char b);
 int EsOperador(char a);
 char *PostInfixPtr(char *expresion);
 void AgregarNodoExpr(NodoExpr **arbol, char *postinfix);
+
+
+Tupla *Get(TablaHash *tabla, void *llave, size_t size);
+//colision
+void initTableHash(TablaHash *tabla, int capacidad,FuncionHash hash1,FuncionHash hash2,char *colision);
+void Put(TablaHash *tabla,Tupla *dato);
+float factor_carga(TablaHash tabla);
+//functions colision
+int linear_probing(void *index);
+int quadratic_probing(int index, int time);
+int heuristica_double_hash(int a,int b,int times);

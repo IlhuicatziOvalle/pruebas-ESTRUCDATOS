@@ -845,3 +845,142 @@ void AgregarNodoExpr(NodoExpr **arbol, char *postinfix)
     }
     *arbol = (NodoExpr *)pop(&pila);  // El último elemento en la pila es la raíz del árbol
 }
+
+
+
+Tupla *Get(TablaHash *tabla, void *llave, size_t size)
+{
+    int indice = tabla->hash1(llave) % tabla->capacidad;
+    ListaDoble *slot = &tabla->slots[indice];
+
+    // Verificar si la lista está vacía en el índice calculado
+    if (slot->head == NULL)
+    {
+        // printf("Error: No se encontró la llave\n");
+        return NULL;
+    }
+
+    // Recorrer la lista en el índice calculado para encontrar la llave
+    NodoDoble *temp = slot->head;
+    while (temp != NULL)
+    {
+        Tupla *dato = (Tupla *)temp->data;
+        if (memcmp(dato->llave, llave, size) == 0)
+        {
+            return dato;
+        }
+        temp = temp->next;
+    }
+
+    // Si la llave no se encuentra en el índice calculado, verificar colisión y buscar en otros índices si es necesario
+    if (strcmp(tabla->tipo_colision, "linear_probing") == 0)
+    {
+        int i = indice + 1;
+        while (i != indice)
+        {
+            if (i >= tabla->capacidad)
+                i = 0;
+            slot = &tabla->slots[i];
+            if (slot->head != NULL)
+            {
+                NodoDoble *temp = slot->head;
+                while (temp != NULL)
+                {
+                    Tupla *dato = (Tupla *)temp->data;
+                    if (memcmp(dato->llave, llave, size) == 0)
+                    {
+                        return dato;
+                    }
+                    temp = temp->next;
+                }
+            }
+            i++;
+        }
+    }
+    else if (strcmp(tabla->tipo_colision, "quadratic_probing") == 0)
+    {
+        int i = 1;
+        while (i <= tabla->capacidad)
+        {
+            int newIndex = quadratic_probing(indice, i);
+            slot = &tabla->slots[newIndex];
+            if (slot->head != NULL)
+            {
+                NodoDoble *temp = slot->head;
+                while (temp != NULL)
+                {
+                    Tupla *dato = (Tupla *)temp->data;
+                    if (memcmp(dato->llave, llave, size) == 0)
+                    {
+                        return dato;
+                    }
+                    temp = temp->next;
+                }
+            }
+            i++;
+        }
+    }
+    else if (strcmp(tabla->tipo_colision, "double_hashing") == 0)
+    {
+        int i = 1;
+        while (i <= tabla->capacidad)
+        {
+            int newIndex = heuristica_double_hash(tabla->hash1(llave), tabla->hash2(llave), i);
+            slot = &tabla->slots[newIndex];
+            if (slot->head != NULL)
+            {
+                NodoDoble *temp = slot->head;
+                while (temp != NULL)
+                {
+                    Tupla *dato = (Tupla *)temp->data;
+                    if (memcmp(dato->llave, llave, size) == 0)
+                    {
+                        return dato;
+                    }
+                    temp = temp->next;
+                }
+            }
+            i++;
+        }
+    }
+
+    // printf("Error: No se encontró la llave\n");
+    return NULL;
+}
+//colision
+void initTableHash(TablaHash *tabla, int capacidad,FuncionHash hash1,FuncionHash hash2,char *colision){
+     tabla->hash1 = hash1;
+    tabla->hash2 = hash2;
+    tabla->size = 0;
+    tabla->capacidad = capacidad;
+    strcpy(tabla->tipo_colision, colision);
+    tabla->slots = (ListaDoble *)malloc(capacidad * sizeof(ListaDoble));
+    for (int i = 0; i < capacidad; i++) {
+        IniciarListaDoble(&tabla->slots[i]);
+    }
+}
+
+
+void Put(TablaHash *tabla,Tupla *dato){
+    int indice = tabla->hash1(dato->llave) % tabla->capacidad;
+    AddTail(&tabla->slots[indice], dato);
+    tabla->size++;
+}
+
+
+float factor_carga(TablaHash tabla){
+   return (float)tabla.size / tabla.capacidad;
+}
+//functions colision
+int linear_probing(void *index){
+     return (*(int*)index + 1);
+
+}
+int quadratic_probing(int index, int time){
+  return index + time * time;
+
+}
+int heuristica_double_hash(int a,int b,int times){
+    return a * times + b;
+
+}
