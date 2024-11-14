@@ -29,22 +29,51 @@ void printTabla(TablaHash tabla){
 }
 int main(void)
 {
+
+    TablaHash tabla;
+    initTableHash(&tabla, 10, miHashFunc, NULL, "linear_probing");
     int opcion,opcion2;
 
     do{
-        printf("Menu");
+        printf("Menu\n");
         printf("1. Registrar paquete\n");
         printf("2. Buscar paquete\n");
         printf("3. Salir\n");
         printf("Selecciona una opcion: ");
         scanf("%d", &opcion);
     
-    switch(&opcion){
-        case1: {
+    switch(opcion){
+        case 1: {
 
         }
+        case 2:{
+            printf("1. Por destinatario\n");
+            printf("2. Por dimensaiones\n");
+            printf("3. Por ID\n");
+            printf("Selecciona una opcion ");
+            scanf("%d", &opcion2);
+            switch(opcion2){
+                case 1: {
+                    
+                }
+                case 2: {
+
+                }
+                case 3: {
+
+                }
+            }
+        }       
+        case 3:{
+            printf("Terminando programa...");
+            break;
+        }
+        default:
+            printf("Opcion invalida. Intente denuevo.\n");
+
     }
-    }    
+    }while(opcion!=3);
+
 
     return 0;
 }
