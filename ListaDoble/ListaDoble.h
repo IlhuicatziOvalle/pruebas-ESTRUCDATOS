@@ -124,3 +124,8 @@ float factor_carga(TablaHash tabla);
 int linear_probing(void *index);
 int quadratic_probing(int index, int time);
 int heuristica_double_hash(int a,int b,int times);
+
+
+void buscar_por_id(TablaHash *tabla, int id);
+void buscar_por_nombre(TablaHash *tabla, char *nombre);
+void buscar_por_dimensiones(TablaHash *tabla, float largo, float ancho, float alto);

@@ -970,3 +970,53 @@ int heuristica_double_hash(int a,int b,int times){
     return a * times + b;
 
 }
+
+
+void buscar_por_id(TablaHash *tabla, int id) {
+    Tupla *resultado = Get(tabla, &id, sizeof(int));
+    if (resultado) {
+        printf("Paquete encontrado: %s\n", (char *)resultado->dato);
+    } else {
+        printf("Paquete no encontrado.\n");
+    }
+}
+
+void buscar_por_nombre(TablaHash *tabla, char *nombre) {
+    int encontrado = 0;
+    for (int i = 0; i < tabla->capacidad; i++) {
+        ListaDoble *lista = &tabla->slots[i];
+        NodoDoble *nodo = lista->Head;
+        while (nodo) {
+            Tupla *dato = (Tupla *)nodo->dato;
+            if (strstr((char *)dato->dato, nombre)) {
+                printf("ID: %d, Datos: %s\n", *(int *)dato->llave, (char *)dato->dato);
+                encontrado = 1;
+            }
+            nodo = nodo->next;
+        }
+    }
+    if (!encontrado) {
+        printf("No se encontraron paquetes con ese nombre.\n");
+    }
+}
+
+void buscar_por_dimensiones(TablaHash *tabla, float largo, float ancho, float alto) {
+    int encontrado = 0;
+    char dimensiones[50];
+    sprintf(dimensiones, "Dimensiones: %.2fx%.2fx%.2f", largo, ancho, alto);
+    for (int i = 0; i < tabla->capacidad; i++) {
+        ListaDoble *lista = &tabla->slots[i];
+        NodoDoble *nodo = lista->Head;
+        while (nodo) {
+            Tupla *dato = (Tupla *)nodo->dato;
+            if (strstr((char *)dato->dato, dimensiones)) {
+                printf("ID: %d, Datos: %s\n", *(int *)dato->llave, (char *)dato->dato);
+                encontrado = 1;
+            }
+            nodo = nodo->next;
+        }
+    }
+    if (!encontrado) {
+        printf("No se encontraron paquetes con esas dimensiones.\n");
+    }
+}

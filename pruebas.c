@@ -4,6 +4,14 @@
 #include <time.h>
 #include "ListaDoble/ListaDoble.h"  // Asegúrate de que este archivo incluya las declaraciones necesarias
 
+// Funciones hash de ejemplo
+int hash1(void *llave) {
+    return (*(int *)llave) % 31; // Ejemplo de hash simple
+}
+
+int hash2(void *llave) {
+    return 7 - ((*(int *)llave) % 7); // Segundo hash para double hashing
+}
 
 int miHashFunc(void *llave){
     char *ll=(char*)llave;
@@ -31,7 +39,7 @@ int main(void)
 {
 
     TablaHash tabla;
-    initTableHash(&tabla, 10, miHashFunc, NULL, "linear_probing");
+    initTableHash(&tabla, 10, hash1, hash2, "linear_probing");
     int opcion,opcion2;
 
     do{
@@ -44,8 +52,28 @@ int main(void)
     
     switch(opcion){
         case 1: {
+                int id;
+                char destinatario[50];
+                float largo, ancho, alto;
+                printf("Ingrese ID del paquete: ");
+                scanf("%d", &id);
+                printf("Ingrese nombre del destinatario: ");
+                scanf("%s", destinatario);
+                printf("Ingrese dimensiones (Largo Ancho Alto): ");
+                scanf("%f %f %f", &largo, &ancho, &alto);
 
-        }
+                Tupla *nuevo = (Tupla *)malloc(sizeof(Tupla));
+                nuevo->llave = malloc(sizeof(int));
+                memcpy(nuevo->llave, &id, sizeof(int));
+
+                char *datosPaquete = malloc(100);
+                sprintf(datosPaquete, "Destinatario: %s, Dimensiones: %.2fx%.2fx%.2f", destinatario, largo, ancho, alto);
+                nuevo->dato = datosPaquete;
+
+                Put(&tabla, nuevo);
+                printf("Paquete registrado.\n");
+                break;
+            }
         case 2:{
             printf("1. Por destinatario\n");
             printf("2. Por dimensaiones\n");
@@ -54,18 +82,30 @@ int main(void)
             scanf("%d", &opcion2);
             switch(opcion2){
                 case 1: {
-                    
+                    char destinatario[50];
+                    printf("Ingrese nombre del destinatario: ");
+                    scanf("%s", destinatario);
+                    buscar_por_nombre(&tabla, destinatario);
+                    break;
                 }
                 case 2: {
-
+                    float largo, ancho, alto;
+                    printf("Ingrese dimensiones (Largo Ancho Alto): ");
+                    scanf("%f %f %f", &largo, &ancho, &alto);
+                    buscar_por_dimensiones(&tabla, largo, ancho, alto);
+                    break;
                 }
                 case 3: {
-
+                int id;
+                printf("Ingrese ID del paquete: ");
+                scanf("%d", &id);
+                buscar_por_id(&tabla, id);
+                break;
                 }
             }
         }       
         case 3:{
-            printf("Terminando programa...");
+            printf("Terminando programa...\n");
             break;
         }
         default:
@@ -77,21 +117,3 @@ int main(void)
 
     return 0;
 }
-   
-
-/*int main(void)
-{
-    TablaHash tabla;
-    initTableHash(&tabla,26,miHashFunc,NULL,"chain");
-    Tupla ejemplo[]={{"AB12","UNO"},{"VP99","DOS"},{"RK32","TRES"},{"CG45","CUATRO"},
-                    {"KL78","CINCO"},{"AA11","OMAR"},{"AC13","GUS"}};
-    for(int i=0;i<7;i++){
-        Put(&tabla,&ejemplo[i]);
-    }
-    printf("factor de carga %f\n",factor_carga(tabla));
-    printTabla(tabla);
-    return 0;
-}*/
-
-
-
