@@ -35,23 +35,32 @@ void printTabla(TablaHash tabla){
         printf("\n");
     }
 }
-int main(void)
-{
+int main(void) {
 
+  
+    // Inicialización de la tabla hash
     TablaHash tabla;
     initTableHash(&tabla, 10, hash1, hash2, "double_hashing");
-    int opcion,opcion2;
 
-    do{
+    // Listas predefinidas de nombres y direcciones
+    char *nombres[] = {"Juan", "Maria", "Pedro", "Luis", "Ana", "Carla", "Roberto", "Elena"};
+    char *direcciones[] = {"Calle 1", "Calle 2", "Avenida 3", "Callejón 4", "Bulevar 5"};
+    int num_nombres = sizeof(nombres) / sizeof(nombres[0]);
+    int num_direcciones = sizeof(direcciones) / sizeof(direcciones[0]);
+
+    int opcion, opcion2;
+
+    do {
         printf("Menu\n");
-        printf("1. Registrar paquete\n");
+        printf("1. Registrar paquetes aleatorios\n");
         printf("2. Buscar paquete\n");
         printf("3. Salir\n");
         printf("Selecciona una opcion: ");
         scanf("%d", &opcion);
-    
-    switch(opcion){
-        case 1: {
+
+        switch (opcion) {
+            case 1: {
+                /*MANUALMENTE AÑADIR A LA HASH
                 int id;
                 char destinatario[50];
                 float Ancho, Alto, Profundidad;
@@ -72,47 +81,56 @@ int main(void)
                 Put(&tabla, nuevo);
                 printf("Paquete registrado.\n");
                 break;
-            }
-        case 2:{
-            printf("1. Por destinatario\n");
-            printf("2. Por dimensaiones\n");
-            printf("3. Por ID\n");
-            printf("Selecciona una opcion ");
-            scanf("%d", &opcion2);
-            switch(opcion2){
-                case 1: {
-                    char destinatario[50];
-                    printf("Ingrese nombre del destinatario: ");
-                    scanf("%s", destinatario);
-                    buscar_por_nombre(&tabla, destinatario);
-                    break;
-                }
-                case 2: {
-                    float Ancho, Alto, Profundidad;
-                    printf("Ingrese dimensiones (Ancho Alto Profundidad): ");
-                    scanf("%f %f %f", &Ancho, &Alto, &Profundidad);
-                    buscar_por_dimensiones(&tabla, Ancho, Alto, Profundidad);
-                    break;
-                }
-                case 3: {
-                int id;
-                printf("Ingrese ID del paquete: ");
-                scanf("%d", &id);
-                buscar_por_id(&tabla, id);
+                }*/
+                
+                int cantidad;
+                printf("Ingrese la cantidad de paquetes a generar: ");
+                scanf("%d", &cantidad);
+                paqueteRandom(&tabla, cantidad, nombres, direcciones, num_nombres, num_direcciones);
                 break;
-                }
             }
-        }       
-        case 3:{
-            printf("Terminando programa...\n");
-            break;
+            case 2: {
+                printf("1. Por destinatario\n");
+                printf("2. Por dimensiones\n");
+                printf("3. Por ID\n");
+                printf("Selecciona una opcion: ");
+                scanf("%d", &opcion2);
+
+                switch (opcion2) {
+                    case 1: {
+                        char destinatario[50];
+                        printf("Ingrese nombre del destinatario: ");
+                        scanf("%s", destinatario);
+                        buscar_por_nombre(&tabla, destinatario);
+                        break;
+                    }
+                    case 2: {
+                        float Ancho, Alto, Profundidad;
+                        printf("Ingrese dimensiones (Ancho Alto Profundidad): ");
+                        scanf("%f %f %f", &Ancho, &Alto, &Profundidad);
+                        buscar_por_dimensiones(&tabla, Ancho, Alto, Profundidad);
+                        break;
+                    }
+                    case 3: {
+                        int id;
+                        printf("Ingrese ID del paquete: ");
+                        scanf("%d", &id);
+                        buscar_por_id(&tabla, id);
+                        break;
+                    }
+                    default:
+                        printf("Opción no válida.\n");
+                }
+                break;
+            }
+            case 3:
+                printf("Terminando programa...\n");
+                printTabla(tabla);
+                break;
+            default:
+                printf("Opción inválida. Intente de nuevo.\n");
         }
-        default:
-            printf("Opcion invalida. Intente denuevo.\n");
-
-    }
-    }while(opcion!=3);
-
+    } while (opcion != 3);
 
     return 0;
 }

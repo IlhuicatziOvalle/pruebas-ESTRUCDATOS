@@ -129,3 +129,4 @@ int heuristica_double_hash(int a,int b,int times);
 void buscar_por_id(TablaHash *tabla, int id);
 void buscar_por_nombre(TablaHash *tabla, char *nombre);
 void buscar_por_dimensiones(TablaHash *tabla, float largo, float ancho, float alto);
+void paqueteRandom(TablaHash *tabla, int cantidad, char **nombres, char **direcciones, int num_nombres, int num_direcciones);

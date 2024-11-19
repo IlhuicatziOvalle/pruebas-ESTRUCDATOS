@@ -1020,3 +1020,27 @@ void buscar_por_dimensiones(TablaHash *tabla, float largo, float ancho, float al
         printf("No se encontraron paquetes con esas dimensiones.\n");
     }
 }
+
+
+void paqueteRandom(TablaHash *tabla, int cantidad, char **nombres, char **direcciones, int num_nombres, int num_direcciones) {
+    srand(time(NULL)); // Inicializar semilla para valores aleatorios
+
+    for (int i = 0; i < cantidad; i++) {
+        int id = i + 1; // ID secuencial para cada paquete
+        char *nombre = nombres[rand() % num_nombres];
+        char *direccion = direcciones[rand() % num_direcciones];
+        float Ancho = (float)(rand() % 100) / 10.0 + 1.0;  // Entre 1.0 y 10.0
+        float Alto = (float)(rand() % 100) / 10.0 + 1.0;
+        float Profundidad = (float)(rand() % 100) / 10.0 + 1.0;
+
+        Tupla *nuevo = (Tupla *)malloc(sizeof(Tupla));
+        nuevo->llave = malloc(sizeof(int));
+        memcpy(nuevo->llave, &id, sizeof(int));
+        char *datosPaquete = malloc(200);
+        sprintf(datosPaquete, "Destinatario: %s, Dirección: %s, Dimensiones: %.2fx%.2fx%.2f", nombre, direccion, Ancho, Alto, Profundidad);
+        nuevo->dato = datosPaquete;
+
+        Put(tabla, nuevo); // Insertar en la tabla hash
+    }
+    printf("%d paquetes generados e insertados aleatoriamente.\n", cantidad);
+}
