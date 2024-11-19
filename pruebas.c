@@ -39,7 +39,7 @@ int main(void)
 {
 
     TablaHash tabla;
-    initTableHash(&tabla, 10, hash1, hash2, "linear_probing");
+    initTableHash(&tabla, 10, hash1, hash2, "double_hashing");
     int opcion,opcion2;
 
     do{
@@ -54,20 +54,19 @@ int main(void)
         case 1: {
                 int id;
                 char destinatario[50];
-                float largo, ancho, alto;
+                float Ancho, Alto, Profundidad;
                 printf("Ingrese ID del paquete: ");
                 scanf("%d", &id);
                 printf("Ingrese nombre del destinatario: ");
                 scanf("%s", destinatario);
-                printf("Ingrese dimensiones (Largo Ancho Alto): ");
-                scanf("%f %f %f", &largo, &ancho, &alto);
+                printf("Ingrese dimensiones (Ancho Alto Profundidad): ");
+                scanf("%f %f %f", &Ancho, &Alto, &Profundidad);
 
                 Tupla *nuevo = (Tupla *)malloc(sizeof(Tupla));
                 nuevo->llave = malloc(sizeof(int));
                 memcpy(nuevo->llave, &id, sizeof(int));
-
                 char *datosPaquete = malloc(100);
-                sprintf(datosPaquete, "Destinatario: %s, Dimensiones: %.2fx%.2fx%.2f", destinatario, largo, ancho, alto);
+                sprintf(datosPaquete, "Destinatario: %s, Dimensiones: %.2fx%.2fx%.2f", destinatario, Ancho, Alto, Profundidad);
                 nuevo->dato = datosPaquete;
 
                 Put(&tabla, nuevo);
@@ -89,10 +88,10 @@ int main(void)
                     break;
                 }
                 case 2: {
-                    float ancho, alto, profundidad;
+                    float Ancho, Alto, Profundidad;
                     printf("Ingrese dimensiones (Ancho Alto Profundidad): ");
-                    scanf("%f %f %f", &ancho, &alto, &profundidad);
-                    buscar_por_dimensiones(&tabla, ancho, alto, profundidad);
+                    scanf("%f %f %f", &Ancho, &Alto, &Profundidad);
+                    buscar_por_dimensiones(&tabla, Ancho, Alto, Profundidad);
                     break;
                 }
                 case 3: {
