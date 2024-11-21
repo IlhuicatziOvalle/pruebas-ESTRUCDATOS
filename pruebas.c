@@ -134,3 +134,168 @@ int main(void) {
 
     return 0;
 }
+
+/*#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Estructuras iniciales
+
+typedef struct _NodoDoble {
+    void *dato;
+    struct _NodoDoble *next;
+    struct _NodoDoble *prev;
+} NodoDoble;
+
+typedef struct _ListaDoble {
+    NodoDoble *Head;
+    NodoDoble *Tail;
+    NodoDoble *Curr;
+    int size;
+} ListaDoble;
+
+typedef struct _Tupla {
+    void *llave;
+    void *dato;
+} Tupla;
+
+typedef int (*FuncionHash)(void *llave);
+
+typedef struct _TablaHash {
+    FuncionHash hash1;
+    FuncionHash hash2;
+    ListaDoble *slots;
+    int size;
+    int capacidad;
+    char tipo_colision[15];
+} TablaHash;
+
+// Inicialización de lista doble
+void InicializarListaDoble(ListaDoble *lista) {
+    lista->Head = NULL;
+    lista->Tail = NULL;
+    lista->Curr = NULL;
+    lista->size = 0;
+}
+
+void PushBack(ListaDoble *lista, void *item) {
+    NodoDoble *nuevo = (NodoDoble *)malloc(sizeof(NodoDoble));
+    nuevo->dato = item;
+    nuevo->next = NULL;
+    nuevo->prev = lista->Tail;
+
+    if (lista->Tail != NULL) {
+        lista->Tail->next = nuevo;
+    }
+    lista->Tail = nuevo;
+
+    if (lista->Head == NULL) {
+        lista->Head = nuevo;
+    }
+    lista->size++;
+}
+
+// Inicialización de tabla hash
+void initTableHash(TablaHash *tabla, int capacidad, FuncionHash hash1, FuncionHash hash2, char *colision) {
+    tabla->hash1 = hash1;
+    tabla->hash2 = hash2;
+    tabla->size = 0;
+    tabla->capacidad = capacidad;
+    strcpy(tabla->tipo_colision, colision);
+    tabla->slots = (ListaDoble *)malloc(capacidad * sizeof(ListaDoble));
+    for (int i = 0; i < capacidad; i++) {
+        InicializarListaDoble(&tabla->slots[i]);
+    }
+}
+
+void Put(TablaHash *tabla, Tupla *dato) {
+    int indice = tabla->hash1(dato->llave) % tabla->capacidad;
+    int step = tabla->hash2(dato->llave);
+    int original_index = indice;
+
+    // Double hashing para manejar colisiones
+    while (tabla->slots[indice].size != 0) {
+        indice = (original_index + step) % tabla->capacidad;
+        if (indice == original_index) {
+            printf("Tabla llena, no se puede insertar\n");
+            return;
+        }
+    }
+    PushBack(&tabla->slots[indice], dato);
+    tabla->size++;
+}
+
+Tupla *Remover(TablaHash *tabla, void *llave, size_t size) {
+    int indice = tabla->hash1(llave) % tabla->capacidad;
+    int step = tabla->hash2(llave);
+    int original_index = indice;
+
+    while (tabla->slots[indice].size != 0) {
+        NodoDoble *temp = tabla->slots[indice].Head;
+        while (temp != NULL) {
+            Tupla *dato = (Tupla *)temp->dato;
+            if (memcmp(dato->llave, llave, size) == 0) {
+                tabla->slots[indice].Head = tabla->slots[indice].Head->next;
+                tabla->size--;
+                return dato;
+            }
+            temp = temp->next;
+        }
+        indice = (original_index + step) % tabla->capacidad;
+        if (indice == original_index) {
+            break;
+        }
+    }
+    return NULL;
+}
+
+float factor_carga(TablaHash tabla) {
+    return (float)tabla.size / tabla.capacidad;
+}
+
+// Funciones hash
+int hash1(void *llave) {
+    char *str = (char *)llave;
+    int hash = 0;
+    while (*str) {
+        hash = (hash * 31 + *str) % 101;
+        str++;
+    }
+    return hash;
+}
+
+int hash2(void *llave) {
+    char *str = (char *)llave;
+    int hash = 0;
+    while (*str) {
+        hash = (hash * 17 + *str) % 97;
+        str++;
+    }
+    return hash == 0 ? 1 : hash; // Asegurar que no sea 0
+}
+
+// Main para pruebas
+int main() {
+    TablaHash tabla;
+    initTableHash(&tabla, 4, hash1, hash2, "double_hashing");
+
+    Tupla t1 = {"A1C1A", "tape"};
+    Tupla t2 = {"B2C2B", "tijeras"};
+    Tupla t3 = {"C3B3C", "hojas"};
+    Tupla t4 = {"A4B4A", "lapiz"};
+    Tupla t5 = {"C5A5C", "borrador"};
+    Tupla t6 = {"B1A1B", "clips"};
+
+    Put(&tabla, &t1);
+    Put(&tabla, &t2);
+    Put(&tabla, &t3);
+    Put(&tabla, &t4);
+    printf("Factor de carga: %.2f\n", factor_carga(tabla));
+
+    Remover(&tabla, "C3B3C", strlen("C3B3C"));
+    Put(&tabla, &t5);
+    Put(&tabla, &t6);
+    printf("Factor de carga: %.2f\n", factor_carga(tabla));
+
+    return 0;
+}*/
